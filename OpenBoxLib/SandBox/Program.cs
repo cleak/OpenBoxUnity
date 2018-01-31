@@ -8,9 +8,7 @@ using System.Drawing;
 namespace SandBox {
     class Program {
         static void TestMagicaFile() {
-            //var m = MagicaFile.Load(@"C:\Users\Caleb\Desktop\MagicaVoxel-0.98.1-win-mac-beta\vox\Rogue\cathedral-2.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\castle.vox");
-            var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\3x3x3.vox");
+            var m = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\Twist.vox");
 
             Console.WriteLine("Loaded {0} models", m.Length);
 
@@ -167,18 +165,6 @@ namespace SandBox {
             Console.WriteLine("Triangle count: {0}", m.Edges.Length / 3);
 
             m.Simplify();
-
-            /*for (int i = 0; i < m.Edges.Length; i += 3) {
-                if (m.Edges[i].vertexIdx >= 0) {
-                    triangleCount++;
-
-                    for (int j = 0; j < 3; ++j) {
-                        Vec3f p = m.Points[m.Edges[i + j].vertexIdx];
-                        Console.WriteLine("<{0}, {1}, {2}>", p.x, p.y, p.z);
-                    }
-                    Console.WriteLine();
-                }
-            }*/
             m.SaveToObj("out_simple.obj");
             m.Compact();
 
@@ -188,22 +174,7 @@ namespace SandBox {
         }
 
         static void TestVoxelSimplify() {
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\3x3x3.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\castle.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\twist.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\3_High.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\o.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\x.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\cathedral-2.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\t.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\v.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\Cup.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\Cup2.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\Wall_02.vox");
-
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\castle.vox");
-            var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\cathedral-2.vox");
-            //var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\Wall_07.vox");
+            var m = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\cathedral-2.vox");
 
             var ms = Mesher.VoxelsToMesh(m[0]);
             ms.PrintStats();
@@ -211,23 +182,12 @@ namespace SandBox {
         }
 
         static void TestVoxelSimplify2() {
-            var m = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\Wall_07.vox");
+            var m = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\Wall_07.vox");
             var ms = Mesher.VoxelsToMeshFull(m[0]);
             ms.SaveToObj("voxels_pre_91.obj");
-            //ms.Collapse(3);
-            //ms.Collapse(11);
-            //ms.Collapse(15);
-            //ms.Collapse(21);
-            //ms.Collapse(29);
-            //ms.Collapse(33);
-            //ms.Collapse(36);
             ms.Collapse(43);
-            //ms.Collapse(47);
-            //ms.Collapse(51);
             ms.Collapse(54);
             ms.Collapse(61);
-            //ms.Collapse(65);
-            //ms.Collapse(69);
             ms.Collapse(91);
             ms.Compact();
             ms.PrintStats();
@@ -258,7 +218,8 @@ namespace SandBox {
         }
 
         static void TestSimplify3() {
-            var voxels = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\cathedral-2.vox");
+            //var voxels = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\cathedral-2.vox");
+            var voxels = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\cathedral-2.vox");
             MeshSimplifier ms = Mesher.VoxelsToMeshFull(voxels[0]);
             Console.WriteLine("Triangles before reduction: " + (ms.Edges.Length / 3));
             ms.Simplify();
