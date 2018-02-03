@@ -11,6 +11,15 @@ using LiteBox.LMath;
 [ScriptedImporter(1, "vox")]
 public class VoxModelImporter : ScriptedImporter {
 
+    public enum ColliderType {
+        None,
+        Exact,
+        BoxFiltered
+    }
+
+    [HideInInspector]
+    public ColliderType colliderType;
+
     public struct Quad {
         public Vector3 position;
         public Color32 color;
@@ -55,7 +64,7 @@ public class VoxModelImporter : ScriptedImporter {
         }
     }
 
-    Mesh LoadVoxModel(string path) {
+    bool LoadVoxModel(string path, out Mesh mesh, out List<BoxMaker.Box> boxes) {
         List<Quad> quads = new List<Quad>();
 
         var voxels = MagicaFile.Load(path)[0];
@@ -89,14 +98,17 @@ public class VoxModelImporter : ScriptedImporter {
             idx++;
         }
 
-        Mesh mesh = new Mesh();
+        mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         mesh.vertices = points;
         mesh.colors32 = colors;
         mesh.uv = uvs;
 
         mesh.SetIndices(indices, MeshTopology.Points, 0);
-        return mesh;
+
+        boxes = BoxMaker.MakeBoxes(voxels);
+
+        return true;
     }
 
     public override void OnImportAsset(AssetImportContext ctx) {
@@ -105,12 +117,16 @@ public class VoxModelImporter : ScriptedImporter {
         ctx.AddObjectToAsset("MainModel", obj);
         ctx.SetMainObject(obj);
 
-
-        //var material = new Material(Shader.Find("OpenBox/Shaders/PointQuads"));
         var material = new Material(Shader.Find("Voxel/PointQuads"));
         ctx.AddObjectToAsset("Material", material);
 
-        var mesh = LoadVoxModel(ctx.assetPath);
+        Mesh mesh;
+        List<BoxMaker.Box> boxes;
+        if (!LoadVoxModel(ctx.assetPath, out mesh, out boxes)) {
+            Debug.LogError("Failed to load asset " + ctx.assetPath);
+            return;
+        }
+
         var renderer = obj.AddComponent<MeshRenderer>();
 
         renderer.material = material;
@@ -119,5 +135,14 @@ public class VoxModelImporter : ScriptedImporter {
         meshFilter.mesh = mesh;
 
         ctx.AddObjectToAsset("Mesh", mesh);
+
+        if (colliderType != ColliderType.None) {
+            // Add box colliders
+            foreach (var boxDesc in boxes) {
+                BoxCollider box = obj.AddComponent<BoxCollider>();
+                box.size = new Vector3(boxDesc.extents.x, boxDesc.extents.y, boxDesc.extents.z);
+                box.center = new Vector3(boxDesc.origin.x, boxDesc.origin.y, boxDesc.origin.z) + box.size / 2.0f;
+            }
+        }
     }
 }

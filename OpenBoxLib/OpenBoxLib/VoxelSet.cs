@@ -266,6 +266,50 @@ namespace OpenBox {
             return x >= 0 && y >= 0 && z >= 0
                 && x < Size.x && y < Size.y && z < Size.z;
         }
+
+        [MethodImpl(256)]
+        public VoxelSet<P> Project<P>(Func<T, P> coversionFunc) where P : struct {
+            VoxelSet<P> projected = new VoxelSet<P>(Size);
+            for (int z = 0; z < Size.z; z++) {
+                for (int y = 0; y < Size.y; y++) {
+                    for (int x = 0; x < Size.x; x++) {
+                        projected[x, y, z] = coversionFunc(this[x, y, z]);
+                    }
+                }
+            }
+
+            return projected;
+        }
+
+        [MethodImpl(256)]
+        public bool IsAllSolid(Func<T, bool> solidCheck) {
+            for (int z = 0; z < Size.z; z++) {
+                for (int y = 0; y < Size.y; y++) {
+                    for (int x = 0; x < Size.x; x++) {
+                        if (!solidCheck(this[x, y, z])) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        [MethodImpl(256)]
+        public bool IsAllEmpty(Func<T, bool> solidCheck) {
+            for (int z = 0; z < Size.z; z++) {
+                for (int y = 0; y < Size.y; y++) {
+                    for (int x = 0; x < Size.x; x++) {
+                        if (solidCheck(this[x, y, z])) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 
     public class VoxelSet<T> : BaseVoxelSet<T, VoxelStorageArray<T>, VoxelViewPassThrough<T, VoxelStorageArray<T>>>

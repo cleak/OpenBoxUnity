@@ -220,6 +220,11 @@ namespace SandBox {
         static void TestSimplify3() {
             //var voxels = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\cathedral-2.vox");
             var voxels = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\cathedral-2.vox");
+
+            var boxes = BoxMaker.MakeBoxes(voxels[0]);
+
+            Console.WriteLine("{0} boxes made", boxes.Count);
+
             MeshSimplifier ms = Mesher.VoxelsToMeshFull(voxels[0]);
             Console.WriteLine("Triangles before reduction: " + (ms.Edges.Length / 3));
             ms.Simplify();
