@@ -14,7 +14,9 @@ public class VoxModelImporter : ScriptedImporter {
     public enum ColliderType {
         None,
         Exact,
-        BoxFiltered
+        HalfScale,
+        ThirdScale,
+        QuarterScale
     }
 
     [HideInInspector]
@@ -64,10 +66,8 @@ public class VoxModelImporter : ScriptedImporter {
         }
     }
 
-    bool LoadVoxModel(string path, out Mesh mesh, out List<BoxMaker.Box> boxes) {
+    Mesh MakeMesh(VoxelSet<Vec4b> voxels) {
         List<Quad> quads = new List<Quad>();
-
-        var voxels = MagicaFile.Load(path)[0];
 
         // Find all visible faces
         for (int z = 0; z < voxels.Size.z; ++z) {
@@ -98,17 +98,60 @@ public class VoxModelImporter : ScriptedImporter {
             idx++;
         }
 
-        mesh = new Mesh();
+        Mesh mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         mesh.vertices = points;
         mesh.colors32 = colors;
         mesh.uv = uvs;
 
         mesh.SetIndices(indices, MeshTopology.Points, 0);
+        return mesh;
+    }
 
-        boxes = BoxMaker.MakeBoxes(voxels);
+    List<BoxMaker.Box> MakeBoxes(VoxelSet<bool> shape, int scale) {
+        List<BoxMaker.Box> boxes = BoxMaker.MakeBoxes(shape);
 
-        return true;
+        if (scale != 1) {
+            foreach (var box in boxes) {
+                box.extents *= scale;
+                box.origin *= scale;
+            }
+        }
+
+        return boxes;
+    }
+
+    // Reduces the size of the shape by a factor of 2 in each dimension
+    VoxelSet<bool> ReduceShape(VoxelSet<bool> shape) {
+
+        VoxelSet<bool> reducedShape = new VoxelSet<bool>(shape.Size / 2);
+        reducedShape.Apply((v, idx) => {
+            reducedShape[idx] = false;
+
+            for (int dz = 0; dz < 2; ++dz) {
+                for (int dy = 0; dy < 2; ++dy) {
+                    for (int dx = 0; dx < 2; ++dx) {
+                        reducedShape[idx] = reducedShape[idx] || shape[idx * 2 + new Vec3i(dx, dy, dz)];
+                    }
+                }
+            }
+        });
+
+        return reducedShape;
+    }
+
+    VoxelSet<bool> ReduceShape(VoxelSet<bool> shape, int factor) {
+        Vec3i size = Vec3i.Max(shape.Size / factor, new Vec3i(1));
+
+        Debug.Log("Old size: " + shape.Size + "     New size: " + size);
+
+        VoxelSet<bool> reducedShape = new VoxelSet<bool>(size);
+        shape.Apply((v, idx) => {
+            Vec3i targetIdx = Vec3i.Min(size - 1, idx / factor);
+            reducedShape[targetIdx] = reducedShape[targetIdx] || v;
+        });
+
+        return reducedShape;
     }
 
     public override void OnImportAsset(AssetImportContext ctx) {
@@ -120,12 +163,9 @@ public class VoxModelImporter : ScriptedImporter {
         var material = new Material(Shader.Find("Voxel/PointQuads"));
         ctx.AddObjectToAsset("Material", material);
 
-        Mesh mesh;
-        List<BoxMaker.Box> boxes;
-        if (!LoadVoxModel(ctx.assetPath, out mesh, out boxes)) {
-            Debug.LogError("Failed to load asset " + ctx.assetPath);
-            return;
-        }
+        var voxels = MagicaFile.Load(ctx.assetPath)[0];
+
+        Mesh mesh = MakeMesh(voxels);
 
         var renderer = obj.AddComponent<MeshRenderer>();
 
@@ -137,6 +177,28 @@ public class VoxModelImporter : ScriptedImporter {
         ctx.AddObjectToAsset("Mesh", mesh);
 
         if (colliderType != ColliderType.None) {
+
+            VoxelSet<bool> shape = voxels.Project(v => v.w > 0);
+            int scale = 1;
+            if (colliderType == ColliderType.HalfScale) {
+                //shape = ReduceShape(shape);
+                shape = ReduceShape(shape, 2);
+                scale = 2;
+            }
+
+            if (colliderType == ColliderType.ThirdScale) {
+                shape = ReduceShape(shape, 3);
+                scale = 3;
+            }
+
+            if (colliderType == ColliderType.QuarterScale) {
+                //shape = ReduceShape(ReduceShape(shape));
+                shape = ReduceShape(shape, 4);
+                scale = 4;
+            }
+
+            List<BoxMaker.Box> boxes = MakeBoxes(shape, scale);
+
             // Add box colliders
             foreach (var boxDesc in boxes) {
                 BoxCollider box = obj.AddComponent<BoxCollider>();

@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: 5df7139379aee4343affb5517eda5204
+guid: 9303782ba5795864689b10860b1ee0f3
 ScriptedImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 3873952e686a2384585b5c0db3d9973c, type: 3}
+  colliderType: 2

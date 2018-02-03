@@ -222,22 +222,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2l l, Vec2l r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2l l, Vec2l r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2l l, Vec2l r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2l l, Vec2l r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -276,11 +276,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2l Min(Vec2l l, Vec2l r) {
+            return new Vec2l(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2l Max(Vec2l l, Vec2l r) {
+            return new Vec2l(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -695,22 +704,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3l l, Vec3l r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3l l, Vec3l r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3l l, Vec3l r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3l l, Vec3l r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -754,12 +763,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3l Min(Vec3l l, Vec3l r) {
+            return new Vec3l(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3l Max(Vec3l l, Vec3l r) {
+            return new Vec3l(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -1365,22 +1383,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4l l, Vec4l r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4l l, Vec4l r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4l l, Vec4l r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4l l, Vec4l r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -1429,13 +1447,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4l Min(Vec4l l, Vec4l r) {
+            return new Vec4l(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4l Max(Vec4l l, Vec4l r) {
+            return new Vec4l(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -1659,22 +1686,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2ul l, Vec2ul r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2ul l, Vec2ul r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2ul l, Vec2ul r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2ul l, Vec2ul r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -1713,11 +1740,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2ul Min(Vec2ul l, Vec2ul r) {
+            return new Vec2ul(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2ul Max(Vec2ul l, Vec2ul r) {
+            return new Vec2ul(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -2132,22 +2168,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3ul l, Vec3ul r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3ul l, Vec3ul r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3ul l, Vec3ul r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3ul l, Vec3ul r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -2191,12 +2227,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3ul Min(Vec3ul l, Vec3ul r) {
+            return new Vec3ul(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3ul Max(Vec3ul l, Vec3ul r) {
+            return new Vec3ul(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -2802,22 +2847,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4ul l, Vec4ul r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4ul l, Vec4ul r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4ul l, Vec4ul r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4ul l, Vec4ul r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -2866,13 +2911,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4ul Min(Vec4ul l, Vec4ul r) {
+            return new Vec4ul(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4ul Max(Vec4ul l, Vec4ul r) {
+            return new Vec4ul(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -3096,22 +3150,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2i l, Vec2i r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2i l, Vec2i r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2i l, Vec2i r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2i l, Vec2i r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -3150,11 +3204,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2i Min(Vec2i l, Vec2i r) {
+            return new Vec2i(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2i Max(Vec2i l, Vec2i r) {
+            return new Vec2i(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -3569,22 +3632,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3i l, Vec3i r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3i l, Vec3i r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3i l, Vec3i r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3i l, Vec3i r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -3628,12 +3691,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3i Min(Vec3i l, Vec3i r) {
+            return new Vec3i(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3i Max(Vec3i l, Vec3i r) {
+            return new Vec3i(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -4239,22 +4311,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4i l, Vec4i r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4i l, Vec4i r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4i l, Vec4i r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4i l, Vec4i r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -4303,13 +4375,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4i Min(Vec4i l, Vec4i r) {
+            return new Vec4i(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4i Max(Vec4i l, Vec4i r) {
+            return new Vec4i(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -4533,22 +4614,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2ui l, Vec2ui r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2ui l, Vec2ui r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2ui l, Vec2ui r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2ui l, Vec2ui r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -4587,11 +4668,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2ui Min(Vec2ui l, Vec2ui r) {
+            return new Vec2ui(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2ui Max(Vec2ui l, Vec2ui r) {
+            return new Vec2ui(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -5006,22 +5096,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3ui l, Vec3ui r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3ui l, Vec3ui r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3ui l, Vec3ui r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3ui l, Vec3ui r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -5065,12 +5155,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3ui Min(Vec3ui l, Vec3ui r) {
+            return new Vec3ui(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3ui Max(Vec3ui l, Vec3ui r) {
+            return new Vec3ui(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -5676,22 +5775,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4ui l, Vec4ui r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4ui l, Vec4ui r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4ui l, Vec4ui r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4ui l, Vec4ui r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -5740,13 +5839,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4ui Min(Vec4ui l, Vec4ui r) {
+            return new Vec4ui(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4ui Max(Vec4ui l, Vec4ui r) {
+            return new Vec4ui(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -5970,22 +6078,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2s l, Vec2s r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2s l, Vec2s r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2s l, Vec2s r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2s l, Vec2s r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -6024,11 +6132,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2s Min(Vec2s l, Vec2s r) {
+            return new Vec2s(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2s Max(Vec2s l, Vec2s r) {
+            return new Vec2s(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -6443,22 +6560,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3s l, Vec3s r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3s l, Vec3s r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3s l, Vec3s r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3s l, Vec3s r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -6502,12 +6619,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3s Min(Vec3s l, Vec3s r) {
+            return new Vec3s(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3s Max(Vec3s l, Vec3s r) {
+            return new Vec3s(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -7113,22 +7239,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4s l, Vec4s r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4s l, Vec4s r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4s l, Vec4s r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4s l, Vec4s r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -7177,13 +7303,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4s Min(Vec4s l, Vec4s r) {
+            return new Vec4s(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4s Max(Vec4s l, Vec4s r) {
+            return new Vec4s(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -7407,22 +7542,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2us l, Vec2us r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2us l, Vec2us r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2us l, Vec2us r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2us l, Vec2us r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -7461,11 +7596,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2us Min(Vec2us l, Vec2us r) {
+            return new Vec2us(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2us Max(Vec2us l, Vec2us r) {
+            return new Vec2us(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -7880,22 +8024,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3us l, Vec3us r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3us l, Vec3us r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3us l, Vec3us r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3us l, Vec3us r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -7939,12 +8083,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3us Min(Vec3us l, Vec3us r) {
+            return new Vec3us(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3us Max(Vec3us l, Vec3us r) {
+            return new Vec3us(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -8550,22 +8703,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4us l, Vec4us r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4us l, Vec4us r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4us l, Vec4us r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4us l, Vec4us r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -8614,13 +8767,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4us Min(Vec4us l, Vec4us r) {
+            return new Vec4us(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4us Max(Vec4us l, Vec4us r) {
+            return new Vec4us(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -8844,22 +9006,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2b l, Vec2b r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2b l, Vec2b r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2b l, Vec2b r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2b l, Vec2b r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -8898,11 +9060,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2b Min(Vec2b l, Vec2b r) {
+            return new Vec2b(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2b Max(Vec2b l, Vec2b r) {
+            return new Vec2b(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -9317,22 +9488,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3b l, Vec3b r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3b l, Vec3b r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3b l, Vec3b r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3b l, Vec3b r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -9376,12 +9547,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3b Min(Vec3b l, Vec3b r) {
+            return new Vec3b(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3b Max(Vec3b l, Vec3b r) {
+            return new Vec3b(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -9987,22 +10167,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4b l, Vec4b r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4b l, Vec4b r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4b l, Vec4b r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4b l, Vec4b r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -10051,13 +10231,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4b Min(Vec4b l, Vec4b r) {
+            return new Vec4b(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4b Max(Vec4b l, Vec4b r) {
+            return new Vec4b(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -10278,22 +10467,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2d l, Vec2d r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2d l, Vec2d r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2d l, Vec2d r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2d l, Vec2d r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -10332,11 +10521,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2d Min(Vec2d l, Vec2d r) {
+            return new Vec2d(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2d Max(Vec2d l, Vec2d r) {
+            return new Vec2d(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -10745,22 +10943,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3d l, Vec3d r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3d l, Vec3d r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3d l, Vec3d r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3d l, Vec3d r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -10804,12 +11002,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3d Min(Vec3d l, Vec3d r) {
+            return new Vec3d(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3d Max(Vec3d l, Vec3d r) {
+            return new Vec3d(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -11406,22 +11613,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4d l, Vec4d r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4d l, Vec4d r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4d l, Vec4d r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4d l, Vec4d r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -11470,13 +11677,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4d Min(Vec4d l, Vec4d r) {
+            return new Vec4d(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4d Max(Vec4d l, Vec4d r) {
+            return new Vec4d(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }
@@ -11697,22 +11913,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec2f l, Vec2f r) {
-            return l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec2f l, Vec2f r) {
-            return l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec2f l, Vec2f r) {
-            return l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec2f l, Vec2f r) {
-            return l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y;
         }
 
         [MethodImpl(256)]
@@ -11751,11 +11967,20 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec2f Min(Vec2f l, Vec2f r) {
+            return new Vec2f(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y));
+        }
+
+        [MethodImpl(256)]
+        public static Vec2f Max(Vec2f l, Vec2f r) {
+            return new Vec2f(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y));
         }
 
     }
@@ -12164,22 +12389,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec3f l, Vec3f r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec3f l, Vec3f r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec3f l, Vec3f r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec3f l, Vec3f r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z;
         }
 
         [MethodImpl(256)]
@@ -12223,12 +12448,21 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec3f Min(Vec3f l, Vec3f r) {
+            return new Vec3f(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z));
+        }
+
+        [MethodImpl(256)]
+        public static Vec3f Max(Vec3f l, Vec3f r) {
+            return new Vec3f(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z));
         }
 
     }
@@ -12825,22 +13059,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public static bool operator <=(Vec4f l, Vec4f r) {
-            return l.x <= r.x && l.x <= r.x && l.x <= r.x && l.x <= r.x;
+            return l.x <= r.x && l.y <= r.y && l.z <= r.z && l.w <= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator <(Vec4f l, Vec4f r) {
-            return l.x < r.x && l.x < r.x && l.x < r.x && l.x < r.x;
+            return l.x < r.x && l.y < r.y && l.z < r.z && l.w < r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >=(Vec4f l, Vec4f r) {
-            return l.x >= r.x && l.x >= r.x && l.x >= r.x && l.x >= r.x;
+            return l.x >= r.x && l.y >= r.y && l.z >= r.z && l.w >= r.w;
         }
 
         [MethodImpl(256)]
         public static bool operator >(Vec4f l, Vec4f r) {
-            return l.x > r.x && l.x > r.x && l.x > r.x && l.x > r.x;
+            return l.x > r.x && l.y > r.y && l.z > r.z && l.w > r.w;
         }
 
         [MethodImpl(256)]
@@ -12889,13 +13123,22 @@ namespace LiteBox.LMath {
 
         [MethodImpl(256)]
         public override string ToString() {
-            int hash = x.GetHashCode();
             return "<" +
                 +x + ", "
                 + y + ", "
                 + z + ", "
                 + w
                 + ">";
+        }
+
+        [MethodImpl(256)]
+        public static Vec4f Min(Vec4f l, Vec4f r) {
+            return new Vec4f(System.Math.Min(l.x, r.x), System.Math.Min(l.y, r.y), System.Math.Min(l.z, r.z), System.Math.Min(l.w, r.w));
+        }
+
+        [MethodImpl(256)]
+        public static Vec4f Max(Vec4f l, Vec4f r) {
+            return new Vec4f(System.Math.Max(l.x, r.x), System.Math.Max(l.y, r.y), System.Math.Max(l.z, r.z), System.Math.Max(l.w, r.w));
         }
 
     }

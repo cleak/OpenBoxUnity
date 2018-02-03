@@ -254,6 +254,18 @@ namespace SandBox {
             bmp.Save("Atlas.png");
         }
 
+        static void TestLowPassFilter() {
+            var voxels = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\cathedral-2.vox")[0];
+            //var voxels = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\Twist.vox")[0];
+
+            Console.WriteLine("Raw boxes: {0}", BoxMaker.MakeBoxes(voxels).Count);
+            for (int i = 0; i <= 20; ++i) {
+                float transference = i / 20.0f;
+                var shape = BoxMaker.LowPassFilter(voxels, transference, 0.25f);
+                Console.WriteLine("{0,3}: {1:F2} {2,6}", i, transference, BoxMaker.MakeBoxes(shape).Count);
+            }
+        }
+
         static void Main(string[] args) {
             //TestMesh();
             //TestMagicaFile();
@@ -262,8 +274,10 @@ namespace SandBox {
             //TestVoxelSimplify2();
 
             //TestVoxelSimplify();
-            TestSimplify3();
+            //TestSimplify3();
             //TestBinPack();
+
+            TestLowPassFilter();
 
             Console.Write("\nPress any key to continue ... ");
             Console.ReadKey();
