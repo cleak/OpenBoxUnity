@@ -1,8 +1,0 @@
-fileFormatVersion: 2
-guid: a4a5e6b6c9d030e44bed9a387e5746e1
-ScriptedImporter:
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
-  script: {fileID: 11500000, guid: 3873952e686a2384585b5c0db3d9973c, type: 3}
-  createBoxColliders: 0
