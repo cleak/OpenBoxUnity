@@ -128,6 +128,7 @@ namespace OpenBox {
 
         public delegate void ValueIndexedDelegate(T t, Vec3i idx);
         public delegate void RefIndexedDelegate(ref T t, Vec3i idx);
+        public delegate void IndexedDelegate(Vec3i idx);
 
         public T this[int x, int y, int z] {
             [MethodImpl(256)]

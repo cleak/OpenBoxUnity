@@ -12,7 +12,9 @@
 		Pass
 	{
 
-		Tags{ "LightMode" = "ForwardBase" }
+		Tags{ "LightMode" = "ForwardBase" "LightMode" = "ForwardAdd" }
+		//Tags{ "LightMode" = "ForwardBase" }
+		//Tags{ "LightMode" = "ForwardAdd" }
 		//Tags{ "LightMode" = "Deferred" }
 		CGPROGRAM
 
@@ -27,9 +29,15 @@
 
 		// compile shader into multiple variants, with and without shadows
 		// (we don't care about any lightmaps yet, so skip these variants)
-#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+		//#pragma multi_compile_fwdbase  nolightmap nodirlightmap nodynlightmap novertexlight
+		//#pragma multi_compile_fwdadd 
+		#pragma multi_compile_fwdbase  nolightmap nodirlightmap nodynlightmap 
 		// shadow helper functions and macros
 #include "AutoLight.cginc"
+
+#ifdef UNITY_PASS_FORWARDADD
+		Blend One One
+#endif
 
 		struct appdata {
 		float4 pos : POSITION;
@@ -108,6 +116,11 @@
 		float3 dx = dxs[faceIdx];
 		float3 dy = dys[faceIdx];
 		float3 normal = normals[faceIdx];
+		half3 worldNormal = UnityObjectToWorldNormal(normal);
+
+		//half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
+		//fixed4 diff = nl * _LightColor0;
+		//diff.rgb += ShadeSH9(half4(worldNormal, 1));
 
 		for (int i = 0; i < 4; ++i) {
 			g2f o = (g2f)0;
@@ -116,13 +129,13 @@
 												+ offsets[i].x * dx
 												+ offsets[i].y * dy,
 												1));
+			//o.color = vIn[0].color * diff;
 			o.color = vIn[0].color;
 
 			// Fog data
 			UNITY_TRANSFER_FOG(o, o.vertex);
 
 			// Lighting data
-			half3 worldNormal = UnityObjectToWorldNormal(normal);
 			half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
 			o.diff = nl * _LightColor0.rgb;
 			o.ambient = ShadeSH9(half4(worldNormal, 1));
@@ -137,13 +150,26 @@
 	{
 		fixed4 col = i.color;
 	// compute shadow attenuation (1.0 = fully lit, 0.0 = fully shadowed)
-	fixed shadow = SHADOW_ATTENUATION(i);
-	// darken light's illumination with shadow, keep ambient intact
-	fixed3 lighting = i.diff * shadow + i.ambient;
-	col.rgb *= lighting;
-	//col.a = 1;
-	//col.rgb = float3(shadow, shadow, shadow);
-	return col;
+		fixed shadow = SHADOW_ATTENUATION(i);
+		// darken light's illumination with shadow, keep ambient intact
+		fixed3 lighting = i.diff * shadow + i.ambient;
+		col.rgb *= lighting;
+		//col.a = 1;
+		//col.rgb = float3(shadow, shadow, shadow);
+#ifdef UNITY_PASS_FORWARDADD
+		//return fixed4(0);
+		//return col;
+#endif
+
+
+#ifdef UNITY_PASS_FORWARDBASE
+		return col;
+		//return fixed4(0, 0, 0, 1);
+#endif
+
+		return fixed4(1, 0, 0, 1);
+		//return col;
+
 	}
 
 		ENDCG

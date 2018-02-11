@@ -13,7 +13,7 @@ public class VoxModelImporterEditor : ScriptedImporterEditor {
         DrawDefaultInspector();
 
         var lastColliderType = importer.colliderType;
-        importer.colliderType = (VoxModelImporter.ColliderType)EditorGUILayout.EnumPopup("Colliders", importer.colliderType);
+        importer.colliderType = (VoxelFactory.ColliderType)EditorGUILayout.EnumPopup("Colliders", importer.colliderType);
 
         if (lastColliderType != importer.colliderType) {
             EditorUtility.SetDirty(target);

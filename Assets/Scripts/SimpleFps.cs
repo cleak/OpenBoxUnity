@@ -12,6 +12,9 @@ public class SimpleFps : MonoBehaviour {
     public float moveSpeed = 16;
     public float turnSpeed = 16;
     public float jumpSpeed = 10.0f;
+
+    public float fallGravityMultiplier = 2.0f;
+
     public bool canJump = true;
 
     public Vector3 velocity = Vector3.zero;
@@ -44,15 +47,20 @@ public class SimpleFps : MonoBehaviour {
         }
 
         Vector3 delta = Vector3.zero;
+        float accel = gravity;
 
-        velocity += gravity * gravityDirection * Time.deltaTime;
+        if (velocity.y < 0) {
+            accel *= fallGravityMultiplier;
+        }
+
+        delta += velocity * Time.deltaTime + gravityDirection * 0.5f * accel * Time.deltaTime * Time.deltaTime;
+        velocity += accel * gravityDirection * Time.deltaTime;
 
         if (canJump && Input.GetKeyDown(KeyCode.Space)) {
             canJump = false;
             velocity += jumpSpeed * -gravityDirection;
         }
 
-        delta += velocity * Time.deltaTime;
 
         // Movement
 		if (Input.GetKey(KeyCode.W)) {
