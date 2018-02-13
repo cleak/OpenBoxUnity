@@ -47,6 +47,32 @@ namespace OpenBox {
             }
         }
 
+        public enum MaterialType : int {
+            Diffuse = 0,
+            Metal = 1,
+            Glass = 2,
+            Emissive = 3
+        }
+
+        public struct Material {
+            public MaterialType materialType;
+
+            public float diffuse;
+            public float metal;
+            public float glass;
+            public float emissive;
+
+            // TODO: Additional properties here
+
+            public float GetAlpha() {
+                if (materialType != MaterialType.Glass) {
+                    return 1.0f;
+                }
+
+                return 1.0f - glass;
+            }
+        }
+
         static string BytesToString(byte[] bytes) {
             return System.Text.Encoding.Default.GetString(bytes);
         }
@@ -58,6 +84,16 @@ namespace OpenBox {
             chunk.numChildBytes = br.ReadInt32();
 
             return chunk;
+        }
+
+        static int CountBits(int bits) {
+            int total = 0;
+            while(bits > 0) {
+                total += (bits & 1);
+                bits >>= 1;
+            }
+
+            return total;
         }
 
         public static VoxelSet<Vec4b>[] Load(string filename) {
@@ -154,6 +190,60 @@ namespace OpenBox {
                         colors[i][j] = (byte)((defaultColorsRaw[i] >> (j * 8)) & 0xff);
                     }
                 }
+            }
+
+            Dictionary<int, Material> materials = new Dictionary<int, Material>();
+
+            // (Optional) Read material
+            if (br.PeekChar() == 'M') {
+                Chunk matChunk = ReadChunk(br);
+                if (matChunk.chunkId != kChunkMatt) {
+                    throw new Exception("Bad material chunk");
+                }
+
+                int bytesRead = 0;
+                while (bytesRead < matChunk.numBytes - 8) {
+                    Material m = new Material();
+                    int id = br.ReadInt32();
+                    m.materialType = (MaterialType)br.ReadInt32();
+
+                    float weight = br.ReadSingle();
+                    int propertyBits = br.ReadInt32();
+                    int propValueCount = CountBits(propertyBits & 0x7);
+
+                    switch (m.materialType) {
+                        case MaterialType.Diffuse:
+                            m.diffuse = weight;
+                            break;
+
+                        case MaterialType.Emissive:
+                            m.emissive = weight;
+                            break;
+
+                        case MaterialType.Glass:
+                            m.glass = weight;
+                            break;
+
+                        case MaterialType.Metal:
+                            m.metal = weight;
+                            break;
+                    }
+
+                    bytesRead += 4 * 4;
+
+                    // Skip property values
+                    for (int i = 0; i < propValueCount; ++i) {
+                        // Ignore property value
+                        br.ReadSingle();
+                        bytesRead += 4;
+                    }
+
+                    materials[id] = m;
+                    colors[id].w = (byte)Math.Round(m.GetAlpha() * 255.0f);
+                }
+
+                // Discard unused color
+                br.ReadInt32();
             }
 
             // Populate colors

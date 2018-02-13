@@ -1,12 +1,11 @@
-﻿Shader "Voxel/PointQuads"
+﻿Shader "Voxel/PointQuadsTransparent"
 {
 	Properties
 	{
 	}
 	SubShader
 	{
-		Tags{ "RenderType" = "Opaque" }
-		//Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
 		LOD 100
 
 		//##############################################################//
@@ -15,6 +14,8 @@
 		Pass
 		{
 			Tags{ "LightMode" = "ForwardBase" }
+
+			ZWrite Off Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
 

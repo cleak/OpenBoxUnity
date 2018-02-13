@@ -13,22 +13,27 @@ public class VoxModelImporter : ScriptedImporter {
     [HideInInspector]
     public VoxelFactory.ColliderType colliderType;
 
+    [HideInInspector]
+    public VoxelFactory.VoxelMaterial materialType;
+
     public override void OnImportAsset(AssetImportContext ctx) {
         // Main asset
         var obj = new GameObject("MainModel");
         ctx.AddObjectToAsset("MainModel", obj);
         ctx.SetMainObject(obj);
 
-        var material = new Material(Shader.Find("Voxel/PointQuads"));
-        ctx.AddObjectToAsset("Material", material);
-
         var voxels = MagicaFile.Load(ctx.assetPath)[0];
 
-        Mesh mesh = VoxelFactory.MakeMesh(voxels);
+        Material[] materials;
+        Mesh mesh;
+        VoxelFactory.MakeMesh(voxels, out mesh, out materials);
+
+        for (int i = 0; i <materials.Length; ++i) {
+            ctx.AddObjectToAsset("Material_" + i, materials[i]);
+        }
 
         var renderer = obj.AddComponent<MeshRenderer>();
-
-        renderer.material = material;
+        renderer.materials = materials;
 
         var meshFilter = obj.AddComponent<MeshFilter>();
         meshFilter.mesh = mesh;

@@ -14,10 +14,20 @@ public class VoxelFactory {
         QuarterScale
     }
 
+    public enum VoxelMaterial {
+        Opaque,
+        Transparent
+        //Emissive
+    }
+
     struct Quad {
         public Vector3 position;
         public Color32 color;
         public Vector2 uv;
+    }
+
+    static bool IsTransparent(VoxelSet<Vec4b> voxels, Vec3i idx) {
+        return voxels[idx].w > 0 && voxels[idx].w < 255;
     }
 
     // Adds all faces for the given index of the given voxels to the list of quads.
@@ -33,12 +43,19 @@ public class VoxelFactory {
             new Vec3i(0, 0, -1)
         };
 
+        bool transparent = IsTransparent(voxels, idx);
+
         for (int i = 0; i < normals.Length; ++i) {
             Vec3i normal = normals[i];
-            Vec3i neighbor = idx + normals[i];
-            if (voxels.IsValid(neighbor) && voxels[neighbor].w > 0) {
-                // Face is hidden
-                continue;
+            Vec3i neighbor = idx + normal;
+            if (voxels.IsValid(neighbor) && (voxels[neighbor].w > 0)) {
+                if (transparent && IsTransparent(voxels, neighbor)) {
+                    continue;
+                }
+
+                if (!transparent && voxels[neighbor].w == 255) {
+                    continue;
+                }
             }
 
             var c = voxels[idx];
@@ -56,12 +73,66 @@ public class VoxelFactory {
             q.uv = new Vector2(i, 0);
 
             quads.Add(q);
+
+            if (transparent) {
+                // Add back facing as well for transparent quads
+                q.uv = new Vector2((i - i % 2) + (i + 1) % 2, 0);
+                quads.Add(q);
+            }
         }
     }
 
+    // Adds geometry for the given quads to the mesh and returns the number of submeshes.
+    static int AddMeshGeometry(List<Quad>[] quads, Mesh mesh) {
+        int geometryCount = 0;
+        int subMeshCount = 0;
+
+        foreach (var q in quads) {
+            geometryCount += q.Count;
+
+            if (q.Count > 0) {
+                subMeshCount++;
+            }
+        }
+
+        // Flatten into mesh
+        Vector3[] points = new Vector3[geometryCount];
+        Color32[] colors = new Color32[geometryCount];
+        Vector2[] uvs = new Vector2[geometryCount];
+
+        int idx = 0;
+        foreach (var quadList in quads) {
+            foreach (var quad in quadList) {
+                points[idx] = quad.position;
+                colors[idx] = quad.color;
+                uvs[idx] = quad.uv;
+                idx++;
+            }
+        }
+
+        mesh.vertices = points;
+        mesh.colors32 = colors;
+        mesh.uv = uvs;
+
+        return subMeshCount;
+    }
+
+    static void AddMeshIndices(List<Quad> quads, Mesh mesh, int baseIdx, int submeshIdx) {
+        int[] indices = new int[quads.Count];
+
+        int idx = 0;
+        foreach (var quad in quads) {
+            indices[idx] = idx + baseIdx;
+            idx++;
+        }
+
+        mesh.SetIndices(indices, MeshTopology.Points, submeshIdx);
+    }
+
     // Makes a mesh from the given voxel set.
-    public static Mesh MakeMesh(VoxelSet<Vec4b> voxels) {
+    public static void MakeMesh(VoxelSet<Vec4b> voxels, out Mesh mesh, out Material[] materials) {
         List<Quad> quads = new List<Quad>();
+        List<Quad> transparentQuads = new List<Quad>();
 
         // Find all visible faces
         for (int z = 0; z < voxels.Size.z; ++z) {
@@ -72,34 +143,46 @@ public class VoxelFactory {
                         continue;
                     }
 
-                    AddFaces(voxels, quads, new Vec3i(x, y, z));
+                    if (voxels[x, y, z].w < 255) {
+                        AddFaces(voxels, transparentQuads, new Vec3i(x, y, z));
+                    } else {
+                        AddFaces(voxels, quads, new Vec3i(x, y, z));
+                    }
                 }
             }
         }
 
-        // Flatten into mesh
-        Vector3[] points = new Vector3[quads.Count];
-        Color32[] colors = new Color32[quads.Count];
-        Vector2[] uvs = new Vector2[quads.Count];
-        int[] indices = new int[quads.Count];
+        mesh = new Mesh();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
-        int idx = 0;
-        foreach (var quad in quads) {
-            points[idx] = quad.position;
-            colors[idx] = quad.color;
-            uvs[idx] = quad.uv;
-            indices[idx] = idx;
-            idx++;
+        int subMeshCount = AddMeshGeometry(new List<Quad>[] {
+            quads,
+            transparentQuads
+        }, mesh);
+        mesh.subMeshCount = subMeshCount;
+
+        materials = new Material[subMeshCount];
+
+        int submeshIdx = 0;
+        int nextPointIdx = 0;
+
+        // Opaque quads
+        if (quads.Count > 0) {
+            AddMeshIndices(quads, mesh, nextPointIdx, submeshIdx);
+            materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuads"));
+
+            nextPointIdx += quads.Count;
+            submeshIdx++;
         }
 
-        Mesh mesh = new Mesh();
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        mesh.vertices = points;
-        mesh.colors32 = colors;
-        mesh.uv = uvs;
+        // Transparent quads
+        if (quads.Count > 0) {
+            AddMeshIndices(transparentQuads, mesh, nextPointIdx, submeshIdx);
+            materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuadsTransparent"));
 
-        mesh.SetIndices(indices, MeshTopology.Points, 0);
-        return mesh;
+            nextPointIdx += quads.Count;
+            submeshIdx++;
+        }
     }
 
     // Makes a set of covers to completely cover the given shape.
@@ -167,11 +250,12 @@ public class VoxelFactory {
     public static GameObject Load(VoxelSet<Vec4b> voxels, ColliderType colliderType) {
         GameObject obj = new GameObject("VoxelModel");
 
-        Material material = new Material(Shader.Find("Voxel/PointQuads"));
-        Mesh mesh = MakeMesh(voxels);
+        Material[] materials;
+        Mesh mesh;
+        MakeMesh(voxels, out mesh, out materials);
 
         MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
-        renderer.material = material;
+        renderer.materials = materials;
 
         MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
         meshFilter.mesh = mesh;
