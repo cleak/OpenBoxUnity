@@ -176,7 +176,7 @@ public class VoxelFactory {
         }
 
         // Transparent quads
-        if (quads.Count > 0) {
+        if (transparentQuads.Count > 0) {
             AddMeshIndices(transparentQuads, mesh, nextPointIdx, submeshIdx);
             materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuadsTransparent"));
 
