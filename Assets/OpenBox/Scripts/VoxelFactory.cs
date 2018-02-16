@@ -50,10 +50,17 @@ public class VoxelFactory {
             Vec3i neighbor = idx + normal;
             if (voxels.IsValid(neighbor) && (voxels[neighbor].w > 0)) {
                 if (transparent && IsTransparent(voxels, neighbor)) {
+                    // Two transparent voxels - face is hidden.
+                    continue;
+                }
+
+                if (transparent && voxels[neighbor].w == 255) {
+                    // Transparent self and opaque neighbor - hidden to avoid z-fighting.
                     continue;
                 }
 
                 if (!transparent && voxels[neighbor].w == 255) {
+                    // Two opaque voxels - face is hidden.
                     continue;
                 }
             }
@@ -76,7 +83,9 @@ public class VoxelFactory {
 
             if (transparent) {
                 // Add back facing as well for transparent quads
-                q.uv = new Vector2((i - i % 2) + (i + 1) % 2, 0);
+                //q.uv = new Vector2((i - (i % 2)) + ((i + 1) % 2), 0);
+                q.uv = new Vector2(i ^ 1, 0);
+                //q.position += new Vector3(normal.x, normal.y, normal.z);
                 quads.Add(q);
             }
         }

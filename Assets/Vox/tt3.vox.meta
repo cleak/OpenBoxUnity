@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: be04bf089233c4a4693ade4542c77843
+guid: 266e37a2bc045cc40a07b52644c38efc
 ScriptedImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 3873952e686a2384585b5c0db3d9973c, type: 3}
-  colliderType: 1
+  colliderType: 0
   materialType: 0

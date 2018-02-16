@@ -292,41 +292,15 @@ namespace SandBox {
         }
 
         static void TestSimplify5() {
-            //var voxels = MagicaFile.Load(@"C:\Projects\FloofBox\uRogue\Assets\VoxModels\cathedral-2.vox");
-            MagicaFile.PrintHeaders(@"..\..\..\..\Assets\Vox\tt3.vox");
             var voxels = MagicaFile.Load(@"..\..\..\..\Assets\Vox\tt3.vox");
-
-            var boxes = BoxMaker.MakeBoxes(voxels[0]);
-
-            Console.WriteLine("{0} boxes made", boxes.Count);
-
-            MeshSimplifier ms = Mesher.VoxelsToMeshFull(voxels[0]);
-            Console.WriteLine("Triangles before reduction: " + (ms.Edges.Length / 3));
-            ms.Simplify();
-            ms.Compact();
-            Console.WriteLine("Triangles after reduction: " + (ms.Edges.Length / 3));
-            int[] tris;
-            Vec3f[] rawPos;
-            Vec3f[] rawNormals;
-            Vec2f[] rawUvs;
-
-            VoxelSet<Vec4b> atlas;
-
-            ms.GetMesh(voxels[0], out tris, out rawPos, out rawNormals, out rawUvs, out atlas);
-
-            Bitmap bmp = new Bitmap(atlas.Size.x, atlas.Size.y);
-
-            for (int y = 0; y < atlas.Size.y; ++y) {
-                for (int x = 0; x < atlas.Size.x; ++x) {
-                    bmp.SetPixel(x, y, Color.FromArgb(
-                        atlas[x, y, 0].x,
-                        atlas[x, y, 0].y,
-                        atlas[x, y, 0].z
-                    ));
+            int transCount = 0;
+            voxels[0].Apply((Vec4b v, Vec3i idx) => {
+                if (v.w > 0 && v.w < 255) {
+                    transCount++;
                 }
-            }
+            });
 
-            bmp.Save("Atlas.png");
+            Console.WriteLine("\nTransparent count: {0}\n", transCount);
         }
 
         static void TestLowPassFilter() {
