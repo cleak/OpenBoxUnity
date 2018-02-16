@@ -16,6 +16,7 @@ namespace OpenBox {
         public const string kChunkXyzi = "XYZI";
         public const string kChunkRgba = "RGBA";
         public const string kChunkMatt = "MATT";
+        public const string kChunkMatl = "MATL"; // New material format from 0.99 onwards
         public const int kVersion = 150;
 
         static uint[] defaultColorsRaw = {
@@ -94,6 +95,36 @@ namespace OpenBox {
             }
 
             return total;
+        }
+
+        public static void PrintHeaders(string filename) {
+            BinaryReader br = new BinaryReader(File.OpenRead(filename));
+
+            // Read header
+            string header = BytesToString(br.ReadBytes(4));
+            if (header != kHeader) {
+                throw new Exception("Bad header magic");
+            }
+
+            int version = br.ReadInt32();
+            if (version != kVersion) {
+                throw new Exception("Bad header version");
+            }
+
+            // Read main chunk
+            Chunk mainChunk = ReadChunk(br);
+            if (mainChunk.chunkId != kChunkMain) {
+                throw new Exception("Bad main chunk ID");
+            }
+            Console.WriteLine(mainChunk);
+
+            while (br.PeekChar() >= 0) {
+                Chunk chunk = ReadChunk(br);
+
+                Console.WriteLine("Chunk {0}: {1} bytes", chunk.chunkId, chunk.numBytes);
+
+                br.ReadBytes(chunk.numBytes);
+            }
         }
 
         public static VoxelSet<Vec4b>[] Load(string filename) {
@@ -194,8 +225,9 @@ namespace OpenBox {
 
             Dictionary<int, Material> materials = new Dictionary<int, Material>();
 
+            int nextChar = br.PeekChar();
             // (Optional) Read material
-            if (br.PeekChar() == 'M') {
+            if (nextChar == 'M') {
                 Chunk matChunk = ReadChunk(br);
                 if (matChunk.chunkId != kChunkMatt) {
                     throw new Exception("Bad material chunk");
@@ -252,8 +284,6 @@ namespace OpenBox {
                     val = colors[val.x];
                 });
             }
-
-            // TODO: Read & apply materials
 
             return models;
         }
