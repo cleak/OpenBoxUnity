@@ -7,7 +7,8 @@ using LiteBox.LMath;
 
 public class PickAndDestroy : MonoBehaviour {
 
-    const float kEps = 0.0005f;
+    //const float kEps = 0.0005f;
+    const float kEps = 0.00005f;
     VoxelSet<Vec4b> voxels;
 
     GameObject voxelModel;
@@ -22,6 +23,11 @@ public class PickAndDestroy : MonoBehaviour {
 
         voxelModel = VoxelFactory.Load(voxels, VoxelFactory.ColliderType.None);
         voxelModel.transform.parent = transform;
+    }
+
+    Vec3i ToIndex(Vector3 v) {
+        //v += 0.5f * Vector3.one;
+        return new Vec3i((int)v.x, (int)v.y, (int)v.z);
     }
 
     Vec3i LayerMarch(Vector3 startPoint, Vector3 dir) {
@@ -43,8 +49,7 @@ public class PickAndDestroy : MonoBehaviour {
 
         float t = 0;
         while (t <= endT) {
-            Vector3 idxUnity = p0 + dir * t;
-            Vec3i idx = new Vec3i((int)idxUnity.x, (int)idxUnity.y, (int)idxUnity.z);
+            Vec3i idx = ToIndex(p0 + dir * (t + kEps));
 
             if (!voxels.IsValid(idx)) {
                 break;
@@ -57,7 +62,7 @@ public class PickAndDestroy : MonoBehaviour {
 
             Vector3 pAbs = p0abs + dirAbs * t;
             Vector3 deltas = VecUtil.Div(Vector3.one - VecUtil.Fract(pAbs), dirAbs);
-            t += Mathf.Max(VecUtil.MinComp(deltas), kEps);
+            t += Mathf.Max(VecUtil.MinComp(deltas), float.Epsilon);
         }
 
         return new Vec3i(-1);
@@ -107,7 +112,7 @@ public class PickAndDestroy : MonoBehaviour {
                                 continue;
                             }
 
-                            if (probePoint[k]< 0 || probePoint[k] > size[k]) {
+                            if (probePoint[k] < 0 || probePoint[k] > size[k]) {
                                 validHit = false;
                             }
                         }
@@ -119,6 +124,8 @@ public class PickAndDestroy : MonoBehaviour {
                 }
 
                 // TODO: Be more elegant about an invalid minT (no hit)
+                //ray.origin += (minT + float.Epsilon) * ray.direction;
+                //ray.origin += minT * ray.direction;
                 ray.origin += (minT + kEps) * ray.direction;
             }
 
