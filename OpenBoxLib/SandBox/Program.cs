@@ -4,6 +4,7 @@ using OpenBox;
 using LiteBox.LMath;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace SandBox {
     class Program {
@@ -315,6 +316,16 @@ namespace SandBox {
             }
         }
 
+        static void SimpleLoad1() {
+            for (int i = 0; i < 32; ++i) {
+                var voxels = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\cathedral-2.vox")[0];
+            }
+        }
+
+        //[DllImport("NativeBox.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("NativeBox.dll")]
+        static extern void HandleStr([MarshalAs(UnmanagedType.LPStr)]String str);
+
         static void Main(string[] args) {
             //TestMesh();
             //TestMagicaFile();
@@ -325,11 +336,17 @@ namespace SandBox {
             //TestVoxelSimplify();
             //TestSimplify3();
             //TestSimplify4();
-            TestSimplify5();
+            //TestSimplify5();
             //TestBinPack();
+
+            //SimpleLoad1();
+
+            //SimpleLoad1();
 
             //TestLowPassFilter();
 
+
+            HandleStr("Hello from managed code");
             Console.Write("\nPress any key to continue ... ");
             Console.ReadKey();
         }

@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 using OpenBox;
@@ -29,6 +31,123 @@ public class VoxelFactory {
     static bool IsTransparent(VoxelSet<Vec4b> voxels, Vec3i idx) {
         return voxels[idx].w > 0 && voxels[idx].w < 255;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Native interop
+
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    struct PointQuadList {
+        public int count;
+        public IntPtr handle;
+    };
+
+    [DllImport("NativeBox.dll")]
+    static extern unsafe void obx_ExtractFaces(IntPtr colors, Vec3i size, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);
+
+    // void obx_CopyFaceGeometry(Faces* faces, vec3* points, vec2* faceIndices, ubvec4* colors) {
+    [DllImport("NativeBox.dll")]
+    static extern unsafe void obx_CopyFaceGeometry(IntPtr facesHandle, IntPtr points, IntPtr faceIndices, IntPtr colors);
+
+    [DllImport("NativeBox.dll")]
+    static extern void obx_FreeFacesHandle(IntPtr handle);
+
+    static int AddMeshGeometry(PointQuadList[] quads, Mesh mesh) {
+        const int kFloatSize = 4;
+        const int kPointSize = 3 * kFloatSize;
+        const int kColorSize = 4;
+        const int kUvSize = 2 * kFloatSize;
+
+        int geometryCount = 0;
+        int subMeshCount = 0;
+
+        foreach (var q in quads) {
+            geometryCount += q.count;
+
+            if (q.count > 0) {
+                subMeshCount++;
+            }
+        }
+
+        // Flatten into mesh
+        Vector3[] points = new Vector3[geometryCount];
+        Color32[] colors = new Color32[geometryCount];
+        Vector2[] uvs = new Vector2[geometryCount];
+
+        var pointsHandle = GCHandle.Alloc(points, GCHandleType.Pinned);
+        var colorsHandle = GCHandle.Alloc(colors, GCHandleType.Pinned);
+        var uvsHandle = GCHandle.Alloc(uvs, GCHandleType.Pinned);
+
+        int facesFilled = 0;
+        for (int i = 0; i < quads.Length; ++i) {
+            obx_CopyFaceGeometry(
+                quads[i].handle,
+                Marshal.UnsafeAddrOfPinnedArrayElement(points, facesFilled),
+                Marshal.UnsafeAddrOfPinnedArrayElement(uvs, facesFilled),
+                Marshal.UnsafeAddrOfPinnedArrayElement(colors, facesFilled)
+            );
+        }
+
+        pointsHandle.Free();
+        colorsHandle.Free();
+        uvsHandle.Free();
+
+        mesh.vertices = points;
+        mesh.colors32 = colors;
+        mesh.uv = uvs;
+
+        return subMeshCount;
+    }
+
+    // Makes a mesh from the given voxel set.
+    public static void MakeMeshNative(VoxelSet<Vec4b> voxels, out Mesh mesh, out Material[] materials) {
+        PointQuadList opaqueFaces = new PointQuadList();
+        PointQuadList transparentFaces = new PointQuadList();
+
+        // TODO: This pinning seems to return the wrong value!
+        IntPtr voxelsPtr = voxels.Pin();
+        obx_ExtractFaces(voxelsPtr, voxels.Size, ref opaqueFaces, ref transparentFaces);
+        voxels.Unpin();
+
+        mesh = new Mesh();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
+        int subMeshCount = AddMeshGeometry(new PointQuadList[] {
+            opaqueFaces,
+            transparentFaces
+        }, mesh);
+        mesh.subMeshCount = subMeshCount;
+
+        materials = new Material[subMeshCount];
+
+        int submeshIdx = 0;
+        int nextPointIdx = 0;
+
+        // Opaque quads
+        if (opaqueFaces.count > 0) {
+            AddMeshIndices(opaqueFaces.count, mesh, nextPointIdx, submeshIdx);
+            materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuads"));
+
+            nextPointIdx += opaqueFaces.count;
+            submeshIdx++;
+        }
+
+        // Transparent quads
+        if (transparentFaces.count > 0) {
+            AddMeshIndices(transparentFaces.count, mesh, nextPointIdx, submeshIdx);
+            materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuadsTransparent"));
+
+            nextPointIdx += transparentFaces.count;
+            submeshIdx++;
+        }
+
+        obx_FreeFacesHandle(opaqueFaces.handle);
+        obx_FreeFacesHandle(transparentFaces.handle);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+
+
 
     // Adds all faces for the given index of the given voxels to the list of quads.
     static void AddFaces(VoxelSet<Vec4b> voxels, List<Quad> quads, Vec3i idx) {
@@ -126,13 +245,11 @@ public class VoxelFactory {
         return subMeshCount;
     }
 
-    static void AddMeshIndices(List<Quad> quads, Mesh mesh, int baseIdx, int submeshIdx) {
-        int[] indices = new int[quads.Count];
+    static void AddMeshIndices(int idxCount, Mesh mesh, int baseIdx, int submeshIdx) {
+        int[] indices = new int[idxCount];
 
-        int idx = 0;
-        foreach (var quad in quads) {
-            indices[idx] = idx + baseIdx;
-            idx++;
+        for (int i = 0; i < idxCount; ++i) {
+            indices[i] = i + baseIdx;
         }
 
         mesh.SetIndices(indices, MeshTopology.Points, submeshIdx);
@@ -177,7 +294,7 @@ public class VoxelFactory {
 
         // Opaque quads
         if (quads.Count > 0) {
-            AddMeshIndices(quads, mesh, nextPointIdx, submeshIdx);
+            AddMeshIndices(quads.Count, mesh, nextPointIdx, submeshIdx);
             materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuads"));
 
             nextPointIdx += quads.Count;
@@ -186,10 +303,10 @@ public class VoxelFactory {
 
         // Transparent quads
         if (transparentQuads.Count > 0) {
-            AddMeshIndices(transparentQuads, mesh, nextPointIdx, submeshIdx);
+            AddMeshIndices(transparentQuads.Count, mesh, nextPointIdx, submeshIdx);
             materials[submeshIdx] = new Material(Shader.Find("Voxel/PointQuadsTransparent"));
 
-            nextPointIdx += quads.Count;
+            nextPointIdx += transparentQuads.Count;
             submeshIdx++;
         }
     }
@@ -261,7 +378,8 @@ public class VoxelFactory {
 
         Material[] materials;
         Mesh mesh;
-        MakeMesh(voxels, out mesh, out materials);
+        //MakeMesh(voxels, out mesh, out materials);
+        MakeMeshNative(voxels, out mesh, out materials);
 
         MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
         renderer.materials = materials;

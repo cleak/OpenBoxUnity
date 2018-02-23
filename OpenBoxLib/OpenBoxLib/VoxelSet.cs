@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using LiteBox.LMath;
 
@@ -335,6 +336,26 @@ namespace OpenBox {
             new VoxelStorageArray<T>(size.x, size.y, size.z)
         ) {
             view.storage = storage;
+        }
+
+        GCHandle? handle;
+
+        public unsafe IntPtr Pin() {
+            if (handle != null) {
+                throw new InvalidOperationException("VoxelSet is already pinned");
+            }
+
+            handle = GCHandle.Alloc(storage.voxels, GCHandleType.Pinned);
+            return handle.Value.AddrOfPinnedObject();
+        }
+
+        public void Unpin() {
+            if (handle == null) {
+                throw new InvalidOperationException("VoxelSet is not pinned");
+            }
+
+            handle.Value.Free();
+            handle = null;
         }
     }
 }

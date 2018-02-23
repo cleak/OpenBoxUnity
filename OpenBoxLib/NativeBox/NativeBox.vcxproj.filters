@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Voxel">
+      <UniqueIdentifier>{a49c3d08-7ac9-4fa3-8b96-321b475f3758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Voxel\Src">
+      <UniqueIdentifier>{2147b0c6-6f01-47f1-8bd5-042f45b25fd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{ad9b9b8c-3221-4d29-b317-49231929779a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Src">
+      <UniqueIdentifier>{38397b5b-b05f-4bbd-9937-4c1fcbd3c25b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="NativeBoxMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxel\MagicaLoader.cpp">
+      <Filter>Voxel\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\LinearAlgebra.cpp">
+      <Filter>Math\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Noise.cpp">
+      <Filter>Math\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Pose.cpp">
+      <Filter>Math\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Transform.cpp">
+      <Filter>Math\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxel\FaceExtractor.cpp">
+      <Filter>Voxel\Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Voxel\MagicaLoader.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel\VoxelSet.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel\VoxelStorage.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel\VoxelView.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Constants.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Frustum.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\LinearAlgebra.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathMisc.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Noise.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Pose.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Transform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\TransformProxy.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Tween.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel\SolidTest.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel\FaceExtractor.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
