@@ -1,0 +1,3 @@
+[submodule "OpenBoxLib/3rdParty/glm"]
+	path = OpenBoxLib/3rdParty/glm
+	url = https://github.com/g-truc/glm.git
