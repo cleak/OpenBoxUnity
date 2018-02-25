@@ -25,13 +25,16 @@
     <Filter Include="Math\Src">
       <UniqueIdentifier>{38397b5b-b05f-4bbd-9937-4c1fcbd3c25b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IO">
+      <UniqueIdentifier>{503a9aaa-6e5d-4dfa-910b-b471822a3fa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO\Src">
+      <UniqueIdentifier>{0f9b3ae4-f552-4413-98c3-1608c1cfdac2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NativeBoxMain.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Voxel\MagicaLoader.cpp">
-      <Filter>Voxel\Src</Filter>
     </ClCompile>
     <ClCompile Include="Math\LinearAlgebra.cpp">
       <Filter>Math\Src</Filter>
@@ -51,11 +54,17 @@
     <ClCompile Include="Voxel\FaceExtractor.cpp">
       <Filter>Voxel\Src</Filter>
     </ClCompile>
+    <ClCompile Include="IO\ByteBuffer.cpp">
+      <Filter>IO\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxel\MagicaModel.cpp">
+      <Filter>Voxel\Src</Filter>
+    </ClCompile>
+    <ClCompile Include="IO\File.cpp">
+      <Filter>IO\Src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Voxel\MagicaLoader.h">
-      <Filter>Voxel</Filter>
-    </ClInclude>
     <ClInclude Include="Voxel\VoxelSet.h">
       <Filter>Voxel</Filter>
     </ClInclude>
@@ -106,6 +115,18 @@
     </ClInclude>
     <ClInclude Include="Voxel\FaceExtractor.h">
       <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\ByteBuffer.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel\MagicaModel.h">
+      <Filter>Voxel</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\File.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="IO.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

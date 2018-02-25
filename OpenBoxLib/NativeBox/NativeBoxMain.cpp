@@ -32,8 +32,8 @@ OBX_EXPORT_DLL void __stdcall obx_ExtractFaces(ubvec4* colors, ivec3 size, Point
 	transparentFaces->handle = new Faces;
 
 	FaceExtractor::FindFaces(voxels, opaqueFaces->handle->faces, transparentFaces->handle->faces);
-	opaqueFaces->count = opaqueFaces->handle->faces.size();
-	transparentFaces->count = transparentFaces->handle->faces.size();
+	opaqueFaces->count = (int)opaqueFaces->handle->faces.size();
+	transparentFaces->count = (int)transparentFaces->handle->faces.size();
 }
 
 OBX_EXPORT_DLL void __stdcall obx_CopyFaceGeometry(Faces* faces, vec3* points, vec2* faceIndices, ubvec4* colors) {

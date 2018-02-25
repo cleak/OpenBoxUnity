@@ -9,6 +9,8 @@
 
 #define OBX_FORCEINLINE __forceinline
 
+#define OBX_NOREF(a) (a)
+
 #define OBX_STRINGIFY(expr) #expr
 
 #ifndef OBX_CLANG

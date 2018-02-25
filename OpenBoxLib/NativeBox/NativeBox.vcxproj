@@ -97,6 +97,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -109,6 +110,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,6 +119,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,6 +130,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -134,6 +138,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IO\ByteBuffer.cpp" />
+    <ClCompile Include="IO\File.cpp" />
     <ClCompile Include="Math\LinearAlgebra.cpp" />
     <ClCompile Include="Math\Noise.cpp" />
     <ClCompile Include="Math\Pose.cpp" />
@@ -141,9 +147,12 @@
     <ClCompile Include="NativeBoxMain.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="Voxel\FaceExtractor.cpp" />
-    <ClCompile Include="Voxel\MagicaLoader.cpp" />
+    <ClCompile Include="Voxel\MagicaModel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IO.h" />
+    <ClInclude Include="IO\ByteBuffer.h" />
+    <ClInclude Include="IO\File.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Math\Constants.h" />
     <ClInclude Include="Math\Frustum.h" />
@@ -157,7 +166,7 @@
     <ClInclude Include="Util.h" />
     <ClInclude Include="Voxel.h" />
     <ClInclude Include="Voxel\FaceExtractor.h" />
-    <ClInclude Include="Voxel\MagicaLoader.h" />
+    <ClInclude Include="Voxel\MagicaModel.h" />
     <ClInclude Include="Voxel\SolidTest.h" />
     <ClInclude Include="Voxel\VoxelSet.h" />
     <ClInclude Include="Voxel\VoxelStorage.h" />
