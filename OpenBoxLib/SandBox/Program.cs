@@ -4,6 +4,7 @@ using OpenBox;
 using LiteBox.LMath;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace SandBox {
@@ -316,15 +317,42 @@ namespace SandBox {
             }
         }
 
-        static void SimpleLoad1() {
+        static TimeSpan SimpleLoad1() {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             for (int i = 0; i < 32; ++i) {
-                var voxels = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\cathedral-2.vox")[0];
+                var voxels = MagicaFile.Load(@"..\..\..\Assets\VoxModels\cathedral-2.vox")[0];
             }
+            stopwatch.Stop();
+            return stopwatch.Elapsed;
+        }
+
+        static TimeSpan NativeLoad1() {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for (int i = 0; i < 32; ++i) {
+                IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\VoxModels\cathedral-2.vox");
+                obx_MagicaFreeModel(model);
+            }
+            stopwatch.Stop();
+            return stopwatch.Elapsed;
         }
 
         //[DllImport("NativeBox.dll", CallingConvention = CallingConvention.Cdecl)]
         [DllImport("NativeBox.dll")]
         static extern void HandleStr([MarshalAs(UnmanagedType.LPStr)]String str);
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct MagicaModelData {
+            public Vec3i size;
+            public IntPtr handle;
+        };
+
+        [DllImport("NativeBox.dll")]
+        static extern IntPtr obx_MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String str);
+
+        [DllImport("NativeBox.dll")]
+        static extern void obx_MagicaFreeModel(IntPtr handle);
 
         static void Main(string[] args) {
             //TestMesh();
@@ -341,12 +369,12 @@ namespace SandBox {
 
             //SimpleLoad1();
 
-            //SimpleLoad1();
+            Console.WriteLine("   Native Milliseconds:     {0}", NativeLoad1().TotalMilliseconds);
+            Console.WriteLine("       C# Milliseconds:     {0}", SimpleLoad1().TotalMilliseconds);
 
             //TestLowPassFilter();
 
-
-            HandleStr("Hello from managed code");
+            //HandleStr("Hello from managed code");
             Console.Write("\nPress any key to continue ... ");
             Console.ReadKey();
         }

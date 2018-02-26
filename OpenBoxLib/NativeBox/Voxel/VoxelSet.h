@@ -283,4 +283,13 @@ public:
 	}
 };
 
+///////////////////////////////////////////////////////////////////////////////
+// Convenience function for constructing a pointer backed voxel set.
+template<typename T>
+auto WrapVoxelSet(ivec3 size, T* voxelPtr) {
+	VoxelSet<T, VoxelStoragePointer<T>, VoxelViewPassthrough, IsVoxelSolid<T>> voxels(size);
+	voxels.Voxels = voxelPtr;
+	return voxels;
+}
+
 } // namepsace obx

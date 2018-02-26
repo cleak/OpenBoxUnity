@@ -46,13 +46,10 @@ public:
 	explicit File(const std::string& filename);
 	explicit File(const char* filename);
 
-	static void Save(const char* filename, size_t numBytes, const void* bytes);
 	static void Save(const std::string& filename, size_t numBytes, const void* bytes);
 
-	static void Save(const char* filename, const Blob& blob);
 	static void Save(const std::string& filename, const Blob& blob);
 
-	static Blob Load(const char* filename);
 	static Blob Load(const std::string& filename);
 
 	static std::list<std::string> FindAll(const std::string& dir);

@@ -75,8 +75,12 @@ public:
 		// Read individual voxels
 		int numVoxels = stream.Read<int32_t>();
 		for (int j = 0; j < numVoxels; ++j) {
-			ivec3 idx = stream.Read<ivec3>();
-			models[modelIdx]->ModelData().At(idx) = stream.Read();
+			ivec3 idx = stream.Read<ubvec3>();
+
+			// Change from Z-up to Y-up
+			std::swap(idx.y, idx.z);
+
+			model->ModelData().At(idx) = stream.Read();
 		}
 
 		return model;
@@ -299,9 +303,4 @@ void MagicaModel::Save(const std::string & filepath) const {
 	OBX_FAIL("Not implemented yet");
 }
 
-UniPtr<VoxelSet<ubvec4>> MagicaModel::ToColoredVoxels() const {
-	return UniPtr<VoxelSet<ubvec4>>();
-}
-
 } // namespace obx
-

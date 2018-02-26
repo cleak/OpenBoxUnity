@@ -42,6 +42,15 @@ public class VoxelFactory {
     };
 
     [DllImport("NativeBox.dll")]
+    static extern unsafe IntPtr obx_MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String filepath);
+
+    [DllImport("NativeBox.dll")]
+    static extern unsafe IntPtr obx_MagicaExtractFaces(IntPtr model, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);
+
+    [DllImport("NativeBox.dll")]
+    static extern void obx_MagicaFreeModel(IntPtr handle);
+
+    [DllImport("NativeBox.dll")]
     static extern unsafe void obx_ExtractFaces(IntPtr colors, Vec3i size, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);
 
     // void obx_CopyFaceGeometry(Faces* faces, vec3* points, vec2* faceIndices, ubvec4* colors) {
@@ -52,11 +61,6 @@ public class VoxelFactory {
     static extern void obx_FreeFacesHandle(IntPtr handle);
 
     static int AddMeshGeometry(PointQuadList[] quads, Mesh mesh) {
-        const int kFloatSize = 4;
-        const int kPointSize = 3 * kFloatSize;
-        const int kColorSize = 4;
-        const int kUvSize = 2 * kFloatSize;
-
         int geometryCount = 0;
         int subMeshCount = 0;
 
@@ -98,16 +102,7 @@ public class VoxelFactory {
         return subMeshCount;
     }
 
-    // Makes a mesh from the given voxel set.
-    public static void MakeMeshNative(VoxelSet<Vec4b> voxels, out Mesh mesh, out Material[] materials) {
-        PointQuadList opaqueFaces = new PointQuadList();
-        PointQuadList transparentFaces = new PointQuadList();
-
-        // TODO: This pinning seems to return the wrong value!
-        IntPtr voxelsPtr = voxels.Pin();
-        obx_ExtractFaces(voxelsPtr, voxels.Size, ref opaqueFaces, ref transparentFaces);
-        voxels.Unpin();
-
+    static void MakeMeshFromQuadLists(PointQuadList opaqueFaces, PointQuadList transparentFaces, out Mesh mesh, out Material[] materials) {
         mesh = new Mesh();
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
@@ -139,6 +134,33 @@ public class VoxelFactory {
             nextPointIdx += transparentFaces.count;
             submeshIdx++;
         }
+    }
+
+    // Makes a mesh from the given voxel set.
+    public static void MakeMeshNative(VoxelSet<Vec4b> voxels, out Mesh mesh, out Material[] materials) {
+        PointQuadList opaqueFaces = new PointQuadList();
+        PointQuadList transparentFaces = new PointQuadList();
+
+        IntPtr voxelsPtr = voxels.Pin();
+        obx_ExtractFaces(voxelsPtr, voxels.Size, ref opaqueFaces, ref transparentFaces);
+        voxels.Unpin();
+
+        MakeMeshFromQuadLists(opaqueFaces, transparentFaces, out mesh, out materials);
+
+        obx_FreeFacesHandle(opaqueFaces.handle);
+        obx_FreeFacesHandle(transparentFaces.handle);
+    }
+
+
+    public static void MakeMeshNative(string magicaVoxelFile, out Mesh mesh, out Material[] materials) {
+        PointQuadList opaqueFaces = new PointQuadList();
+        PointQuadList transparentFaces = new PointQuadList();
+
+        IntPtr model = obx_MagicaLoadModel(magicaVoxelFile);
+        obx_MagicaExtractFaces(model, ref opaqueFaces, ref transparentFaces);
+        obx_MagicaFreeModel(model);
+
+        MakeMeshFromQuadLists(opaqueFaces, transparentFaces, out mesh, out materials);
 
         obx_FreeFacesHandle(opaqueFaces.handle);
         obx_FreeFacesHandle(transparentFaces.handle);
@@ -388,6 +410,26 @@ public class VoxelFactory {
         meshFilter.mesh = mesh;
 
         AddColliders(obj, voxels, colliderType);
+
+        return obj;
+    }
+
+    public static GameObject Load(string filepath, ColliderType colliderType) {
+        GameObject obj = new GameObject("VoxelModel");
+
+        Material[] materials;
+        Mesh mesh;
+        //MakeMesh(voxels, out mesh, out materials);
+        MakeMeshNative(filepath, out mesh, out materials);
+
+        MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
+        renderer.materials = materials;
+
+        MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
+        meshFilter.mesh = mesh;
+
+        // TODO: Handle colliders natively
+        //AddColliders(obj, voxels, colliderType);
 
         return obj;
     }

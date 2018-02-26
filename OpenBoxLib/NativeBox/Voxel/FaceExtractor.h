@@ -3,6 +3,7 @@
 #include <list>
 
 #include "VoxelSet.h"
+#include "MagicaModel.h"
 
 namespace obx {
 
@@ -20,6 +21,9 @@ class FaceExtractor {
 public:
 
 	static void FindFaces(const VoxelSet<ubvec4, VoxelStoragePointer<ubvec4>>& voxels,
+						  std::list<PointQuad>& opaqueFaces, std::list<PointQuad>& transparentFaces);
+
+	static void FindFaces(const MagicaModel& model,
 						  std::list<PointQuad>& opaqueFaces, std::list<PointQuad>& transparentFaces);
 };
 

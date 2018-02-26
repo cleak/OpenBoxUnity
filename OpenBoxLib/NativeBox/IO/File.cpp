@@ -82,25 +82,17 @@ File::File(const char* filename) {
 	fileIn.close();
 }
 
-void File::Save(const char * filename, size_t numBytes, const void * bytes) {
+void File::Save(const std::string & filename, size_t numBytes, const void * bytes) {
 	ofstream fout(filename, ios::out | ios::binary);
 	fout.write((const char*)bytes, numBytes);
 	fout.close();
-}
-
-void File::Save(const std::string & filename, size_t numBytes, const void * bytes) {
-	Save(filename.c_str(), numBytes, bytes);
-}
-
-void File::Save(const char * filename, const Blob & blob) {
-	Save(filename, blob.Size(), blob.Data());
 }
 
 void File::Save(const std::string & filename, const Blob & blob) {
 	Save(filename, blob.Size(), blob.Data());
 }
 
-Blob File::Load(const char * filename) {
+Blob File::Load(const std::string & filename) {
 	OBX_ASSERT(fs::exists(filename));
 	ifstream fileIn(filename, ios::in | ios::binary | ios::ate);
 	size_t size = fileIn.tellg();
@@ -109,10 +101,6 @@ Blob File::Load(const char * filename) {
 	fileIn.read((char*)blob.Data(), size);
 	fileIn.close();
 	return blob;
-}
-
-Blob File::Load(const std::string & filename) {
-	return Load(filename.c_str());
 }
 
 std::list<std::string> File::FindAll(const std::string & dir) {
