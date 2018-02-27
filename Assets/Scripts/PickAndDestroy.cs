@@ -9,24 +9,24 @@ public class PickAndDestroy : MonoBehaviour {
 
     //const float kEps = 0.0005f;
     const float kEps = 0.00005f;
-    VoxelSet<Vec4b> voxels;
+    //VoxelSet<Vec4b> voxels;
 
     GameObject voxelModel;
+    VoxelComponent voxelComp;
 
     // Use this for initialization
     void Start () {
-        voxels = new VoxelSet<Vec4b>(32);
+        voxelModel = new GameObject("VoxelModel");
+        voxelComp = voxelModel.AddComponent<VoxelComponent>();
+        voxelComp.LoadMagicaModel(@"C:\Projects\Unity\OpenBoxUnity\Assets\VoxModels\cathedral-2.vox", true);
 
-        voxels.Apply((ref Vec4b v, Vec3i idx) => {
-            v = new Vec4b((idx * 255) / voxels.Size, 255);
-        });
-
-        voxelModel = VoxelFactory.Load(voxels, VoxelFactory.ColliderType.None);
+        //voxelModel = VoxelFactory.Load(@"C:\Projects\Unity\OpenBoxUnity\Assets\VoxModels\cathedral-2.vox", VoxelFactory.ColliderType.None);
         voxelModel.transform.parent = transform;
     }
 
     Vec3i ToIndex(Vector3 v) {
         //v += 0.5f * Vector3.one;
+        //return new Vec3i((int)v.x, (int)v.y, (int)v.z);
         return new Vec3i((int)v.x, (int)v.y, (int)v.z);
     }
 
@@ -34,7 +34,7 @@ public class PickAndDestroy : MonoBehaviour {
         dir = Vector3.Normalize(dir);
 
         //Vector3 voxelSize = transform.lossyScale;
-        Vector3 voxelGridSize = new Vector3(voxels.Size.x, voxels.Size.y, voxels.Size.z);
+        Vector3 voxelGridSize = new Vector3(voxelComp.Voxels.Size.x, voxelComp.Voxels.Size.y, voxelComp.Voxels.Size.z);
 
         //Vector3 p0 = VecUtil.Div(startPoint, voxelSize);
         Vector3 p0 = startPoint;
@@ -51,12 +51,12 @@ public class PickAndDestroy : MonoBehaviour {
         while (t <= endT) {
             Vec3i idx = ToIndex(p0 + dir * (t + kEps));
 
-            if (!voxels.IsValid(idx)) {
+            if (!voxelComp.Voxels.IsValid(idx)) {
                 break;
             }
 
-            Vec4b c = voxels[idx];
-            if (c.w > 0) {
+            Color32 c = voxelComp.Voxels[idx];
+            if (c.a > 0) {
                 return idx;
             }
 
@@ -73,7 +73,7 @@ public class PickAndDestroy : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            Vector3 size = VecUtil.Mul(new Vector3(voxels.Size.x, voxels.Size.y, voxels.Size.z), transform.lossyScale);
+            Vector3 size = VecUtil.Mul(new Vector3(voxelComp.Voxels.Size.x, voxelComp.Voxels.Size.y, voxelComp.Voxels.Size.z), transform.lossyScale);
 
             // TODO: Does this account for scale properly? Probably not.
             ray.direction = transform.InverseTransformDirection(ray.direction);
@@ -132,11 +132,12 @@ public class PickAndDestroy : MonoBehaviour {
             Vec3i idx = LayerMarch(ray.origin, ray.direction);
             if (idx.x >= 0) {
                 Debug.Log("Layer march hit: " + idx);
-                voxels[idx] = new Vec4b(0);
+                voxelComp.Voxels[idx] = new Color32(0, 0, 0, 0);
 
-                Destroy(voxelModel);
-                voxelModel = VoxelFactory.Load(voxels, VoxelFactory.ColliderType.None);
-                voxelModel.transform.parent = transform;
+                voxelComp.UpdateMesh();
+                //Destroy(voxelModel);
+                //voxelModel = VoxelFactory.Load(voxelComp.Voxels, VoxelFactory.ColliderType.None);
+                //voxelModel.transform.parent = transform;
             }
         }
 	}

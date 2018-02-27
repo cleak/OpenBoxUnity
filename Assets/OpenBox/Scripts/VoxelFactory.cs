@@ -42,15 +42,6 @@ public class VoxelFactory {
     };
 
     [DllImport("NativeBox.dll")]
-    static extern unsafe IntPtr obx_MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String filepath);
-
-    [DllImport("NativeBox.dll")]
-    static extern unsafe IntPtr obx_MagicaExtractFaces(IntPtr model, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);
-
-    [DllImport("NativeBox.dll")]
-    static extern void obx_MagicaFreeModel(IntPtr handle);
-
-    [DllImport("NativeBox.dll")]
     static extern unsafe void obx_ExtractFaces(IntPtr colors, Vec3i size, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);
 
     // void obx_CopyFaceGeometry(Faces* faces, vec3* points, vec2* faceIndices, ubvec4* colors) {
@@ -59,6 +50,17 @@ public class VoxelFactory {
 
     [DllImport("NativeBox.dll")]
     static extern void obx_FreeFacesHandle(IntPtr handle);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // MagicaVoxel related functions
+    [DllImport("NativeBox.dll")]
+    static extern unsafe IntPtr obx_MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String filepath);
+
+    [DllImport("NativeBox.dll")]
+    static extern unsafe IntPtr obx_MagicaExtractFaces(IntPtr model, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);
+
+    [DllImport("NativeBox.dll")]
+    static extern void obx_MagicaFreeModel(IntPtr handle);
 
     static int AddMeshGeometry(PointQuadList[] quads, Mesh mesh) {
         int geometryCount = 0;

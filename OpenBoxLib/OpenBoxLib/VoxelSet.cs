@@ -25,28 +25,29 @@ namespace OpenBox {
         public T[,,] voxels;
 
         public VoxelStorageArray(int x, int y, int z) {
-            voxels = new T[x, y, z];
+            // Z-first for consistent index order with native code.
+            voxels = new T[z, y, x];
         }
 
         public T this[int x, int y, int z] {
             [MethodImpl(256)]
-            get => voxels[x, y, z];
+            get => voxels[z, y, x];
 
             [MethodImpl(256)]
-            set => voxels[x, y, z] = value;
+            set => voxels[z, y, x] = value;
         }
 
         public T this[Vec3i idx] {
             [MethodImpl(256)]
-            get => voxels[idx.x, idx.y, idx.z];
+            get => voxels[idx.z, idx.y, idx.x];
 
             [MethodImpl(256)]
-            set => voxels[idx.x, idx.y, idx.z] = value;
+            set => voxels[idx.z, idx.y, idx.x] = value;
         }
 
         public Vec3i Size {
             [MethodImpl(256)]
-            get => new Vec3i(voxels.GetLength(0), voxels.GetLength(1), voxels.GetLength(2));
+            get => new Vec3i(voxels.GetLength(2), voxels.GetLength(1), voxels.GetLength(0));
         }
     }
 
