@@ -34,7 +34,7 @@ public class PickAndDestroy : MonoBehaviour {
         dir = Vector3.Normalize(dir);
 
         //Vector3 voxelSize = transform.lossyScale;
-        Vector3 voxelGridSize = new Vector3(voxelComp.Voxels.Size.x, voxelComp.Voxels.Size.y, voxelComp.Voxels.Size.z);
+        Vector3 voxelGridSize = new Vector3(voxelComp.voxels.Size.x, voxelComp.voxels.Size.y, voxelComp.voxels.Size.z);
 
         //Vector3 p0 = VecUtil.Div(startPoint, voxelSize);
         Vector3 p0 = startPoint;
@@ -51,11 +51,11 @@ public class PickAndDestroy : MonoBehaviour {
         while (t <= endT) {
             Vec3i idx = ToIndex(p0 + dir * (t + kEps));
 
-            if (!voxelComp.Voxels.IsValid(idx)) {
+            if (!voxelComp.voxels.IsValid(idx)) {
                 break;
             }
 
-            Color32 c = voxelComp.Voxels[idx];
+            Color32 c = voxelComp.voxels[idx];
             if (c.a > 0) {
                 return idx;
             }
@@ -69,11 +69,11 @@ public class PickAndDestroy : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	void Update22 () {
 		if (Input.GetMouseButtonDown(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            Vector3 size = VecUtil.Mul(new Vector3(voxelComp.Voxels.Size.x, voxelComp.Voxels.Size.y, voxelComp.Voxels.Size.z), transform.lossyScale);
+            Vector3 size = VecUtil.Mul(new Vector3(voxelComp.voxels.Size.x, voxelComp.voxels.Size.y, voxelComp.voxels.Size.z), transform.lossyScale);
 
             // TODO: Does this account for scale properly? Probably not.
             ray.direction = transform.InverseTransformDirection(ray.direction);
@@ -132,7 +132,7 @@ public class PickAndDestroy : MonoBehaviour {
             Vec3i idx = LayerMarch(ray.origin, ray.direction);
             if (idx.x >= 0) {
                 Debug.Log("Layer march hit: " + idx);
-                voxelComp.Voxels[idx] = new Color32(0, 0, 0, 0);
+                voxelComp.voxels[idx] = new Color32(0, 0, 0, 0);
 
                 voxelComp.UpdateMesh();
                 //Destroy(voxelModel);
@@ -141,4 +141,17 @@ public class PickAndDestroy : MonoBehaviour {
             }
         }
 	}
+
+    void Update() {
+        if (Input.GetMouseButtonDown(0)) {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            VoxelHit hitInfo;
+            if (voxelComp.RaycastVoxel(ray.origin, ray.direction, out hitInfo)) {
+                Debug.Log("Layer march hit: " + hitInfo.index);
+                voxelComp.voxels[hitInfo.index] = new Color32(0, 0, 0, 0);
+                voxelComp.UpdateMesh();
+            }
+        }
+    }
 }
