@@ -124,42 +124,36 @@ public:
 			throw MagicaException("Unexpected MATT chunk location");
 		}
 
-		int bytesRead = 0;
-		while (bytesRead < matChunk.numBytes - 8) {
-			int id = stream.Read<int32_t>();
-			MagicaMaterial& m = models[0]->Materials()[id];
+		int id = stream.Read<int32_t>();
+		MagicaMaterial& m = models[0]->Materials()[id];
 			
-			m.baseType = (MagicaMaterial::Type)stream.Read<int32_t>();
-			float weight = stream.Read<float>();
-			int propertyBits = stream.Read<int32_t>();
-			int propValueCount = CountBits(propertyBits & 0x7);
+		m.baseType = (MagicaMaterial::Type)stream.Read<int32_t>();
+		float weight = stream.Read<float>();
+		int propertyBits = stream.Read<int32_t>();
+		int propValueCount = CountBits(propertyBits & 0x7);
 
-			switch (m.baseType) {
-			case MagicaMaterial::Type::Diffuse:
-				m.diffuse = weight;
-				break;
+		switch (m.baseType) {
+		case MagicaMaterial::Type::Diffuse:
+			m.diffuse = weight;
+			break;
 
-			case MagicaMaterial::Type::Emissive:
-				m.emissive = weight;
-				break;
+		case MagicaMaterial::Type::Emissive:
+			m.emissive = weight;
+			break;
 
-			case MagicaMaterial::Type::Glass:
-				m.glass = weight;
-				break;
+		case MagicaMaterial::Type::Glass:
+			m.glass = weight;
+			break;
 
-			case MagicaMaterial::Type::Metal:
-				m.metal = weight;
-				break;
-			}
+		case MagicaMaterial::Type::Metal:
+			m.metal = weight;
+			break;
+		}
 
-			bytesRead += 4 * 4;
-
-			// Skip property values
-			for (int i = 0; i < propValueCount; ++i) {
-				// Ignore property value
-				stream.Read<float>();
-				bytesRead += 4;
-			}
+		// Skip property values
+		for (int i = 0; i < propValueCount; ++i) {
+			// Ignore property value
+			stream.Read<float>();
 		}
 	}
 

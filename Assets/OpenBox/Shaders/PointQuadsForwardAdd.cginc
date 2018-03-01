@@ -54,6 +54,9 @@ void geom(point v2g vIn[1], inout TriangleStream<g2f> vOutStream) {
 }
 
 fixed4 frag_surf(g2f i) : SV_Target {	
+	/*
+	Fog seems to work different in 2017.3 vs 2018.1
+
 #	ifdef FOG_COMBINED_WITH_TSPACE
 		UNITY_EXTRACT_FOG_FROM_TSPACE(IN);
 #	elif defined (FOG_COMBINED_WITH_WORLD_POS)
@@ -61,6 +64,7 @@ fixed4 frag_surf(g2f i) : SV_Target {
 #	else
 		UNITY_EXTRACT_FOG(IN);
 #	endif
+	*/
 
 	float3 worldPos = i.worldPos.xyz;
 #	ifndef USING_DIRECTIONAL_LIGHT
@@ -101,7 +105,7 @@ fixed4 frag_surf(g2f i) : SV_Target {
 	c += LightingStandard(o, worldViewDir, gi);
 	//c.a = 1.0;
 	c.a = 0.0;
-	UNITY_APPLY_FOG(_unity_fogCoord, c); // apply fog
+	UNITY_APPLY_FOG(i.fogCoord, c); // apply fog
 	UNITY_OPAQUE_ALPHA(c.a);
 	//return c * float4(_LightColor0.rgb, 1);
 	return c;

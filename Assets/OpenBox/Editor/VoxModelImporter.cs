@@ -22,17 +22,24 @@ public class VoxModelImporter : ScriptedImporter {
         ctx.AddObjectToAsset("MainModel", obj);
         ctx.SetMainObject(obj);
 
-        var voxels = MagicaFile.Load(ctx.assetPath)[0];
+        var voxComp = obj.AddComponent<VoxelComponent>();
+        voxComp.LoadMagicaModel(ctx.assetPath, true);
 
-        Material[] materials;
-        Mesh mesh;
-        VoxelFactory.MakeMesh(voxels, out mesh, out materials);
+        //var voxels = MagicaFile.Load(ctx.assetPath)[0];
 
-        for (int i = 0; i <materials.Length; ++i) {
-            ctx.AddObjectToAsset("Material_" + i, materials[i]);
+        //Mesh mesh;
+        //VoxelFactory.MakeMesh(voxels, out mesh, out materials);
+
+        var meshFilter = obj.GetComponent<MeshFilter>();
+        var mesh = meshFilter.sharedMesh;
+        ctx.AddObjectToAsset("Mesh", mesh);
+
+        var meshRenderer = obj.GetComponent<MeshRenderer>();
+        for (int i = 0; i < meshRenderer.sharedMaterials.Length; ++i) {
+            ctx.AddObjectToAsset("Material_" + i, meshRenderer.sharedMaterials[i]);
         }
 
-        var renderer = obj.AddComponent<MeshRenderer>();
+        /*var renderer = obj.AddComponent<MeshRenderer>();
         renderer.materials = materials;
 
         var meshFilter = obj.AddComponent<MeshFilter>();
@@ -43,6 +50,6 @@ public class VoxModelImporter : ScriptedImporter {
 
         if (colliderType != VoxelFactory.ColliderType.None) {
             VoxelFactory.AddColliders(obj, voxels, colliderType);
-        }
+        }*/
     }
 }

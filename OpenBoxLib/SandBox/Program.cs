@@ -327,6 +327,15 @@ namespace SandBox {
             return stopwatch.Elapsed;
         }
 
+        static void SimpleLoad2() {
+            var voxels = MagicaFile.Load(@"..\..\..\Assets\Vox\well-1.vox")[0];
+        }
+
+        static void NativeLoad2() {
+            IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\Vox\well-1.vox");
+            obx_MagicaFreeModel(model);
+        }
+
         static TimeSpan NativeLoad1() {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -367,10 +376,11 @@ namespace SandBox {
             //TestSimplify5();
             //TestBinPack();
 
-            //SimpleLoad1();
+            SimpleLoad2();
+            NativeLoad2();
 
-            Console.WriteLine("   Native Milliseconds:     {0}", NativeLoad1().TotalMilliseconds);
-            Console.WriteLine("       C# Milliseconds:     {0}", SimpleLoad1().TotalMilliseconds);
+            //Console.WriteLine("   Native Milliseconds:     {0}", NativeLoad1().TotalMilliseconds);
+            //Console.WriteLine("       C# Milliseconds:     {0}", SimpleLoad1().TotalMilliseconds);
 
             //TestLowPassFilter();
 

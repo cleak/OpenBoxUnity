@@ -26,17 +26,21 @@ public struct VoxelHit {
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-public class VoxelComponent : MonoBehaviour {
-    public VoxelSet<Color32> voxels { get; set; }
+public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
+    public VoxelSet<Color32> voxels;
+    public string testMe;
 
     public void Clear() {
         voxels = null;
 
+#if !UNITY_EDITOR
         MeshFilter mf = GetComponent<MeshFilter>();
-        if (mf.mesh) {
-            Destroy(mf.mesh);
-            mf.mesh = null;
+        if (mf.sharedMesh != null) {
+            Destroy(mf.sharedMesh);
+            mf.sharedMesh = null;
         }
+#endif
+
     }
 
     /// Adds indices of the specified range to the specified submesh.
@@ -126,8 +130,8 @@ public class VoxelComponent : MonoBehaviour {
             submeshIdx++;
         }
 
-        GetComponent<MeshRenderer>().materials = materials;
-        GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshRenderer>().sharedMaterials = materials;
+        GetComponent<MeshFilter>().sharedMesh = mesh;
     }
 
     /// Loads a MagicaVoxel model into the current model.
@@ -158,10 +162,8 @@ public class VoxelComponent : MonoBehaviour {
     /// Turns the current voxel set into a mesh, replacing any currently attached mesh.
 	public void UpdateMesh() {
         MeshFilter mf = GetComponent<MeshFilter>();
-        if (mf.mesh) {
-            Destroy(mf.mesh);
-            mf.mesh = null;
-        }
+
+        // TODO: Remove old mesh?
 
         PointQuadList opaqueFaces = new PointQuadList();
         PointQuadList transparentFaces = new PointQuadList();
@@ -177,21 +179,28 @@ public class VoxelComponent : MonoBehaviour {
     }
 
     #region Layer Marching
-    const float kEps = 0.00005f;
+    //const float kEps = 0.00005f;
+    const float kEps = float.Epsilon * 16;
+    //const float kEps = float.Epsilon;
+    //const float kEps = float.Epsilon;
+    //const float kEps = 0;
 
     public bool RaycastVoxel(Vector3 origin, Vector3 direction, out VoxelHit hitInfo) {
         hitInfo = new VoxelHit();
+
+        direction = Vector3.Normalize(direction);
 
         if (voxels == null) {
             throw new InvalidOperationException("Tried to raycast on an empty voxel set");
         }
 
-        Vector3 size = VecUtil.Mul(new Vector3(voxels.Size.x, voxels.Size.y, voxels.Size.z), transform.lossyScale);
+        //Vector3 size = VecUtil.Mul(new Vector3(voxels.Size.x, voxels.Size.y, voxels.Size.z), transform.lossyScale);
+        Vector3 size = new Vector3(voxels.Size.x, voxels.Size.y, voxels.Size.z);
 
         // TODO: Does this account for scale properly? Probably not.
         Ray ray = new Ray(
             transform.InverseTransformPoint(origin),
-            transform.InverseTransformDirection(direction)
+            transform.InverseTransformVector(direction)
         );
 
         bool inside = true;
@@ -203,6 +212,7 @@ public class VoxelComponent : MonoBehaviour {
             }
         }
 
+        float dist = 0;
         if (!inside) {
             // Find a point on the surface to start at.
             float minT = float.PositiveInfinity;
@@ -242,14 +252,22 @@ public class VoxelComponent : MonoBehaviour {
             }
 
             // TODO: Be more elegant about an invalid minT (no hit)
-            ray.origin += (minT + kEps) * ray.direction;
+            //ray.origin += (minT + kEps) * ray.direction;
+            //ray.origin += (minT + 0.00005f) * ray.direction;
+            dist = minT + 0.00005f;
         }
 
-        float dist;
-        if (LayerMarch(ray.origin, ray.direction, out hitInfo.index, out hitInfo.neighborIndex, out dist)) {
+        if (LayerMarch(ray.origin, ray.direction, out hitInfo.index, out hitInfo.neighborIndex, ref dist)) {
             hitInfo.point = transform.TransformPoint(ray.GetPoint(dist));
             // TODO: Find a quicker way to do this; must account for non-uniform scale
             hitInfo.distance = (hitInfo.point - origin).magnitude;
+
+            Vec3i finalIdx = ToIndex(transform.InverseTransformPoint(origin + direction * (hitInfo.distance + kEps)));
+            if (finalIdx.x != hitInfo.index.x ||
+                finalIdx.y != hitInfo.index.y ||
+                finalIdx.z != hitInfo.index.z) {
+                Debug.LogError("Final hit mismatch. Expected " + finalIdx + " but was " + hitInfo.index);
+            }
 
             Vec3i delta = hitInfo.neighborIndex - hitInfo.index;
             hitInfo.normal = transform.TransformDirection(new Vector3(delta.x, delta.y, delta.z));
@@ -260,12 +278,10 @@ public class VoxelComponent : MonoBehaviour {
     }
 
     Vec3i ToIndex(Vector3 v) {
-        //v += 0.5f * Vector3.one;
-        //return new Vec3i((int)v.x, (int)v.y, (int)v.z);
         return new Vec3i((int)v.x, (int)v.y, (int)v.z);
     }
 
-    bool LayerMarch(Vector3 startPoint, Vector3 dir, out Vec3i hitIdx, out Vec3i lastIdx, out float t) {
+    bool LayerMarch(Vector3 startPoint, Vector3 dir, out Vec3i hitIdx, out Vec3i lastIdx, ref float t) {
         dir = Vector3.Normalize(dir);
 
         Vector3 voxelGridSize = new Vector3(voxels.Size.x, voxels.Size.y, voxels.Size.z);
@@ -276,15 +292,32 @@ public class VoxelComponent : MonoBehaviour {
             VecUtil.Div(-p0, dir)
         ));
 
-        Vector3 p0abs = VecUtil.Mul(Vector3.one - VecUtil.Step(0, dir), voxelGridSize)
-            + VecUtil.Mul(VecUtil.Sign(dir), p0);
         Vector3 dirAbs = VecUtil.Abs(dir);
 
+        // TODO: This is making invalid assumptions about p0
+        Vector3 p0abs = VecUtil.Mul(Vector3.one - VecUtil.Step(0, dir), voxelGridSize)
+            + VecUtil.Mul(VecUtil.Sign(dir), p0);
+
         //float t = 0;
-        t = 0;
+        //t = 0;
         lastIdx = ToIndex(p0 + dir * (t - kEps));
+        int iterationCount = 0;
+        List<Vector3> debugPos = new List<Vector3>();
+        List<Vector3> debugPosAbs = new List<Vector3>();
         while (t <= endT) {
             Vec3i idx = ToIndex(p0 + dir * (t + kEps));
+            debugPos.Add(p0 + dir * (t + kEps));
+            //Vec3i idx = ToIndex(p0 + dir * t);
+
+            debugPosAbs.Add(p0abs + dirAbs * (t + kEps));
+            Vector3 pAbs = p0abs + dirAbs * (t + kEps);
+
+            ////////////////
+            // DEBUG CODE
+            Vec3i delta = idx - lastIdx;
+            if (Vec3i.Dot(delta, delta) > 1) {
+                Debug.LogWarning("Skipped a voxel");
+            }
 
             if (!voxels.IsValid(idx)) {
                 break;
@@ -298,13 +331,84 @@ public class VoxelComponent : MonoBehaviour {
 
             lastIdx = idx;
 
-            Vector3 pAbs = p0abs + dirAbs * t;
+            // Pretend we came in from a positive direction
+            
+            //Vector3 pAbs = p0abs + dirAbs * (t);
             Vector3 deltas = VecUtil.Div(Vector3.one - VecUtil.Fract(pAbs), dirAbs);
-            t += Mathf.Max(VecUtil.MinComp(deltas), float.Epsilon);
+            //t += Mathf.Max(VecUtil.MinComp(deltas), float.Epsilon);
+            t += Mathf.Max(VecUtil.MinComp(deltas), 0.0005f);
+
+            //Vector3 pAbs = p0abs + dirAbs * t;
+            //Vector3 deltas = VecUtil.Div(Vector3.one - VecUtil.Fract(pAbs), dirAbs);
+            //t += Mathf.Max(VecUtil.MinComp(deltas), float.Epsilon);
+
+            //Vector3 pAbs = p0abs + dirAbs * t;
+            //Vector3 p = p0 + dir * t;
+            //Vector3 deltas = VecUtil.Div(VecUtil.Step(0, dir) - VecUtil.Fract(p), dir);
+            //t += Mathf.Max(VecUtil.MinComp(deltas), 0.0005f);
+            //t += Mathf.Max(VecUtil.MinComp(deltas), float.Epsilon);
+            iterationCount++;
         }
 
         hitIdx = new Vec3i(-1);
         return false;
+    }
+
+    [SerializeField]
+    [HideInInspector]
+    private Color32[] serializeVoxelColors;
+
+    [SerializeField]
+    [HideInInspector]
+    private Vector3Int serializeVoxelDimension;
+
+    public void OnBeforeSerialize() {
+        if (voxels == null) {
+            return;
+        }
+
+        serializeVoxelDimension = new Vector3Int(
+            voxels.Size.x,
+            voxels.Size.y,
+            voxels.Size.z
+        );
+
+        // TODO: MemCopy would be better
+        serializeVoxelColors = new Color32[serializeVoxelDimension.x * serializeVoxelDimension.y * serializeVoxelDimension.z];
+        for (int z = 0; z < serializeVoxelDimension.z; ++z) {
+            for (int y = 0; y < serializeVoxelDimension.y; ++y) {
+                int offset = y * serializeVoxelDimension.x
+                    + z * serializeVoxelDimension.y * serializeVoxelDimension.x;
+                for (int x = 0; x < serializeVoxelDimension.x; ++x) {
+                    serializeVoxelColors[offset + x] = voxels[x, y, z];
+                }
+            }
+        }
+    }
+
+    public void OnAfterDeserialize() {
+        if (serializeVoxelColors == null) {
+            return;
+        }
+
+        voxels = new VoxelSet<Color32>(
+            serializeVoxelDimension.x,
+            serializeVoxelDimension.y,
+            serializeVoxelDimension.z
+        );
+
+        // TODO: MemCopy would be better
+        for (int z = 0; z < serializeVoxelDimension.z; ++z) {
+            for (int y = 0; y < serializeVoxelDimension.y; ++y) {
+                int offset = y * serializeVoxelDimension.x
+                    + z * serializeVoxelDimension.y * serializeVoxelDimension.x;
+                for (int x = 0; x < serializeVoxelDimension.x; ++x) {
+                    voxels[x, y, z] = serializeVoxelColors[offset + x];
+                }
+            }
+        }
+
+        serializeVoxelColors = null;
     }
 
     #endregion

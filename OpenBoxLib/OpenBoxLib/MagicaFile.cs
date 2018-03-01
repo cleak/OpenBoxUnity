@@ -220,48 +220,39 @@ namespace OpenBox {
                 throw new Exception("Bad material chunk");
             }
 
-            int bytesRead = 0;
-            while (bytesRead < matChunk.numBytes - 8) {
-                Material m = new Material();
-                int id = br.ReadInt32();
-                m.materialType = (MaterialType)br.ReadInt32();
+            Material m = new Material();
+            int id = br.ReadInt32();
+            m.materialType = (MaterialType)br.ReadInt32();
 
-                float weight = br.ReadSingle();
-                int propertyBits = br.ReadInt32();
-                int propValueCount = CountBits(propertyBits & 0x7);
+            float weight = br.ReadSingle();
+            int propertyBits = br.ReadInt32();
+            int propValueCount = CountBits(propertyBits & 0x7);
 
-                switch (m.materialType) {
-                    case MaterialType.Diffuse:
-                        m.diffuse = weight;
-                        break;
+            switch (m.materialType) {
+                case MaterialType.Diffuse:
+                    m.diffuse = weight;
+                    break;
 
-                    case MaterialType.Emissive:
-                        m.emissive = weight;
-                        break;
+                case MaterialType.Emissive:
+                    m.emissive = weight;
+                    break;
 
-                    case MaterialType.Glass:
-                        m.glass = weight;
-                        break;
+                case MaterialType.Glass:
+                    m.glass = weight;
+                    break;
 
-                    case MaterialType.Metal:
-                        m.metal = weight;
-                        break;
-                }
-
-                bytesRead += 4 * 4;
-
-                // Skip property values
-                for (int i = 0; i < propValueCount; ++i) {
-                    // Ignore property value
-                    br.ReadSingle();
-                    bytesRead += 4;
-                }
-
-                materials[id] = m;
-
-                // TODO: Populate colors with this material
-                ///colors[id].w = (byte)Math.Round(m.GetAlpha() * 255.0f);
+                case MaterialType.Metal:
+                    m.metal = weight;
+                    break;
             }
+
+            // Skip property values
+            for (int i = 0; i < propValueCount; ++i) {
+                // Ignore property value
+                br.ReadSingle();
+            }
+
+            materials[id] = m;
         }
 
         // Loads a material using the new material format.
