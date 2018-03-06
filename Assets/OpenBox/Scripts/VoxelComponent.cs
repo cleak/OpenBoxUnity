@@ -180,7 +180,8 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
 
     #region Layer Marching
     //const float kEps = 0.00005f;
-    const float kEps = float.Epsilon * 16;
+    const float kEps = 0.005f;
+    //const float kEps = float.Epsilon * 16;
     //const float kEps = float.Epsilon;
     //const float kEps = float.Epsilon;
     //const float kEps = 0;
@@ -295,8 +296,20 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
         Vector3 dirAbs = VecUtil.Abs(dir);
 
         // TODO: This is making invalid assumptions about p0
-        Vector3 p0abs = VecUtil.Mul(Vector3.one - VecUtil.Step(0, dir), voxelGridSize)
-            + VecUtil.Mul(VecUtil.Sign(dir), p0);
+        //Vector3 p0abs = VecUtil.Mul(Vector3.one - VecUtil.Step(0, dir), voxelGridSize)
+        //    + VecUtil.Mul(VecUtil.Sign(dir), p0);
+
+        //Vector3 negativeDimensions = Vector3.one - VecUtil.Step(0, dir);
+        //Vector3 p0abs = VecUtil.Mul(negativeDimensions, voxelGridSize) - VecUtil.Mul(negativeDimensions, p0)
+        //+ VecUtil.Mul(VecUtil.Step(0, dir), p0);
+
+        Vector3 p0abs = p0;
+
+        for (int i = 0; i < 3; ++i) {
+            if (dir[i] < 0) {
+                p0abs[i] = voxelGridSize[i] - p0[i];
+            }
+        }
 
         //float t = 0;
         //t = 0;
@@ -304,6 +317,9 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
         int iterationCount = 0;
         List<Vector3> debugPos = new List<Vector3>();
         List<Vector3> debugPosAbs = new List<Vector3>();
+
+        t += kEps;
+
         while (t <= endT) {
             Vec3i idx = ToIndex(p0 + dir * (t + kEps));
             debugPos.Add(p0 + dir * (t + kEps));
@@ -336,7 +352,8 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
             //Vector3 pAbs = p0abs + dirAbs * (t);
             Vector3 deltas = VecUtil.Div(Vector3.one - VecUtil.Fract(pAbs), dirAbs);
             //t += Mathf.Max(VecUtil.MinComp(deltas), float.Epsilon);
-            t += Mathf.Max(VecUtil.MinComp(deltas), 0.0005f);
+            //t += Mathf.Max(VecUtil.MinComp(deltas), 0.0005f);
+            t += Mathf.Max(VecUtil.MinComp(deltas), kEps) + kEps;
 
             //Vector3 pAbs = p0abs + dirAbs * t;
             //Vector3 deltas = VecUtil.Div(Vector3.one - VecUtil.Fract(pAbs), dirAbs);
