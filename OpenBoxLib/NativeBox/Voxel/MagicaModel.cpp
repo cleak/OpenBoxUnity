@@ -63,6 +63,7 @@ public:
 
 		// TODO: This seems to load models rotated 180 degrees
 		ivec3 size = stream.Read<ivec3>();
+		std::swap(size.y, size.z);
 
 		UniPtr<MagicaModel> model;
 		model.reset(new MagicaModel(size));
@@ -130,7 +131,8 @@ public:
 		m.baseType = (MagicaMaterial::Type)stream.Read<int32_t>();
 		float weight = stream.Read<float>();
 		int propertyBits = stream.Read<int32_t>();
-		int propValueCount = CountBits(propertyBits & 0x7);
+		//int propValueCount = CountBits(propertyBits & 0x7);
+		int propValueCount = CountBits(propertyBits);
 
 		switch (m.baseType) {
 		case MagicaMaterial::Type::Diffuse:
