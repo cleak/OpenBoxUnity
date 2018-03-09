@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2aeb71c83425d954e90e00ea886883e6
+guid: 4f9f078c2fbe43e408e26aca38c6d2a5
 ScriptedImporter:
   fileIDToRecycleName:
     100000: MainModel/MainModel
@@ -15,5 +15,5 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 3873952e686a2384585b5c0db3d9973c, type: 3}
-  colliderType: 1
+  colliderType: 0
   materialType: 0

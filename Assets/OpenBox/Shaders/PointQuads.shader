@@ -50,6 +50,33 @@
 		} // End forward add pass
 
 		//##############################################################//
+		//                     Deferred pass
+		//##############################################################//
+		Pass
+		{
+			Name "DEFERRED"
+			Tags{ "LightMode" = "Deferred" }
+
+			CGPROGRAM
+			
+			#pragma require geometry
+
+			#pragma vertex vert
+			#pragma fragment frag_surf
+			#pragma geometry geom
+			#pragma multi_compile_instancing
+			#pragma target 3.0
+			#pragma exclude_renderers nomrt
+			#pragma skip_variants FOG_LINEAR FOG_EXP FOG_EXP2
+			#pragma multi_compile_prepassfinal noshadowmask nodynlightmap nolightmap noshadow 
+		
+			#include "UnityCG.cginc"
+			#include "PointQuadsDeferred.cginc"
+	
+			ENDCG
+		} // End pass ShadowCaster
+
+		//##############################################################//
 		//                     Shadow caster pass
 		//##############################################################//
 		Pass

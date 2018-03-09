@@ -161,8 +161,6 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
 
     /// Turns the current voxel set into a mesh, replacing any currently attached mesh.
 	public void UpdateMesh() {
-        MeshFilter mf = GetComponent<MeshFilter>();
-
         // TODO: Remove old mesh?
 
         PointQuadList opaqueFaces = new PointQuadList();
