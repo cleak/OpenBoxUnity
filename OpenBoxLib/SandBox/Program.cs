@@ -328,11 +328,11 @@ namespace SandBox {
         }
 
         static void SimpleLoad2() {
-            var voxels = MagicaFile.Load(@"..\..\..\Assets\Vox\well-1.vox")[0];
+            var voxels = MagicaFile.Load(@"..\..\..\Assets\Vox\room2-B.vox")[0];
         }
 
         static void NativeLoad2() {
-            IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\Vox\well-1.vox");
+            IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\Vox\room2-B.vox");
             obx_MagicaFreeModel(model);
         }
 
