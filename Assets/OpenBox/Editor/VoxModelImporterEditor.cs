@@ -10,12 +10,13 @@ public class VoxModelImporterEditor : ScriptedImporterEditor {
 
         VoxModelImporter importer = (VoxModelImporter)target;
 
+        var lastTrim = importer.trimEmptySpace;
         DrawDefaultInspector();
 
         var lastColliderType = importer.colliderType;
         importer.colliderType = (VoxelFactory.ColliderType)EditorGUILayout.EnumPopup("Colliders", importer.colliderType);
 
-        if (lastColliderType != importer.colliderType) {
+        if (lastColliderType != importer.colliderType || lastTrim != importer.trimEmptySpace) {
             EditorUtility.SetDirty(target);
             importer.SaveAndReimport();
         }

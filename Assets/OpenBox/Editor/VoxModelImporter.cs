@@ -15,9 +15,6 @@ public class VoxModelImporter : ScriptedImporter {
     [HideInInspector]
     public VoxelFactory.ColliderType colliderType;
 
-    [HideInInspector]
-    public VoxelFactory.VoxelMaterial materialType;
-
     public override void OnImportAsset(AssetImportContext ctx) {
         // Main asset
         var obj = new GameObject("MainModel");
@@ -30,12 +27,7 @@ public class VoxModelImporter : ScriptedImporter {
             flags |= MagicaFlags.Trim;
         }
 
-        voxComp.LoadMagicaModel(ctx.assetPath, true, VoxelFactory.ColliderType.Exact, flags);
-
-        //var voxels = MagicaFile.Load(ctx.assetPath)[0];
-
-        //Mesh mesh;
-        //VoxelFactory.MakeMesh(voxels, out mesh, out materials);
+        voxComp.LoadMagicaModel(ctx.assetPath, true, colliderType, flags);
 
         var meshFilter = obj.GetComponent<MeshFilter>();
         var mesh = meshFilter.sharedMesh;
@@ -45,18 +37,5 @@ public class VoxModelImporter : ScriptedImporter {
         for (int i = 0; i < meshRenderer.sharedMaterials.Length; ++i) {
             ctx.AddObjectToAsset("Material_" + i, meshRenderer.sharedMaterials[i]);
         }
-
-        /*var renderer = obj.AddComponent<MeshRenderer>();
-        renderer.materials = materials;
-
-        var meshFilter = obj.AddComponent<MeshFilter>();
-        meshFilter.mesh = mesh;
-
-        ctx.AddObjectToAsset("Mesh", mesh);
-
-
-        if (colliderType != VoxelFactory.ColliderType.None) {
-            VoxelFactory.AddColliders(obj, voxels, colliderType);
-        }*/
     }
 }
