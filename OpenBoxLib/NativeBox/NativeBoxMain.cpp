@@ -17,6 +17,10 @@ struct Faces {
 	list<PointQuad> faces;
 };
 
+enum MagicaLoadFlags : uint32_t {
+	Trim = 0x01
+};
+
 #pragma pack(push, 1)
 struct PointQuadList {
 	int32_t count;
@@ -33,8 +37,12 @@ extern "C" {
 ////////////////////////////////////////////////////////////////////////////////
 // MagicaVoxel functions
 
-OBX_EXPORT_DLL MagicaModel* __stdcall obx_MagicaLoadModel(char* filename) {
-	return new MagicaModel(filename);
+OBX_EXPORT_DLL MagicaModel* __stdcall obx_MagicaLoadModel(char* filename, MagicaLoadFlags flags) {
+	auto model = new MagicaModel(filename);
+	if (flags & MagicaLoadFlags::Trim) {
+		model->TrimEmptySpace();
+	}
+	return model;
 }
 
 OBX_EXPORT_DLL ivec3 __stdcall obx_MagicaModelSize(MagicaModel* model) {

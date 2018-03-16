@@ -10,6 +10,8 @@ using LiteBox.LMath;
 
 [ScriptedImporter(1, "vox")]
 public class VoxModelImporter : ScriptedImporter {
+    public bool trimEmptySpace = false;
+
     [HideInInspector]
     public VoxelFactory.ColliderType colliderType;
 
@@ -23,7 +25,12 @@ public class VoxModelImporter : ScriptedImporter {
         ctx.SetMainObject(obj);
 
         var voxComp = obj.AddComponent<VoxelComponent>();
-        voxComp.LoadMagicaModel(ctx.assetPath, true, VoxelFactory.ColliderType.Exact);
+        MagicaFlags flags = 0;
+        if (trimEmptySpace) {
+            flags |= MagicaFlags.Trim;
+        }
+
+        voxComp.LoadMagicaModel(ctx.assetPath, true, VoxelFactory.ColliderType.Exact, flags);
 
         //var voxels = MagicaFile.Load(ctx.assetPath)[0];
 

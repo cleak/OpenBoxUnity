@@ -13,7 +13,12 @@ namespace OpenBox {
     public struct PointQuadList {
         public int count;
         public IntPtr handle;
-    };
+    }
+
+    [Flags]
+    public enum MagicaFlags : uint {
+        Trim = 0x01
+    }
 
     public static class OpenBoxNative {
         [DllImport("NativeBox.dll", EntryPoint = "obx_ExtractFaces")]
@@ -29,7 +34,7 @@ namespace OpenBox {
         ////////////////////////////////////////////////////////////////////////////
         // MagicaVoxel related functions
         [DllImport("NativeBox.dll", EntryPoint = "obx_MagicaLoadModel")]
-        public static extern unsafe IntPtr MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String filepath);
+        public static extern unsafe IntPtr MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String filepath, MagicaFlags flags);
 
         [DllImport("NativeBox.dll", EntryPoint = "obx_MagicaExtractFaces")]
         public static extern unsafe IntPtr MagicaExtractFaces(IntPtr model, ref PointQuadList opaqueFaces, ref PointQuadList transparentFaces);

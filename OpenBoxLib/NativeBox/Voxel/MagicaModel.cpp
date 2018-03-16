@@ -299,4 +299,21 @@ void MagicaModel::Save(const std::string & filepath) const {
 	OBX_FAIL("Not implemented yet");
 }
 
+void MagicaModel::TrimEmptySpace() {
+	ivec3 minSolid = modelData->Size();
+	ivec3 maxSolid(0);
+
+	modelData->ApplyIndexed([&](uint8_t v, int x, int y, int z) {
+		if (v == 0) {
+			// Ignore empty voxels
+			return;
+		}
+
+		minSolid = glm::min(minSolid, ivec3(x, y, z));
+		maxSolid = glm::max(maxSolid, ivec3(x, y, z));
+	});
+
+	modelData = modelData->Slice(minSolid, maxSolid).Clone();
+}
+
 } // namespace obx

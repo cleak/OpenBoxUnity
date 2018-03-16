@@ -136,7 +136,7 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
     }
 
     /// Loads a MagicaVoxel model into the current model.
-    public void LoadMagicaModel(string magicaVoxelFile, bool retainVoxels, VoxelFactory.ColliderType colliderType) {
+    public void LoadMagicaModel(string magicaVoxelFile, bool retainVoxels, VoxelFactory.ColliderType colliderType, MagicaFlags flags) {
         Clear();
 
         this.colliderType = colliderType;
@@ -144,7 +144,7 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
         PointQuadList opaqueFaces = new PointQuadList();
         PointQuadList transparentFaces = new PointQuadList();
 
-        IntPtr model = OpenBoxNative.MagicaLoadModel(magicaVoxelFile);
+        IntPtr model = OpenBoxNative.MagicaLoadModel(magicaVoxelFile, flags);
         OpenBoxNative.MagicaExtractFaces(model, ref opaqueFaces, ref transparentFaces);
 
         if (retainVoxels || colliderType != VoxelFactory.ColliderType.None) {

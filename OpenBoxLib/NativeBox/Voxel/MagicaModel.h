@@ -73,6 +73,9 @@ public:
 	void Load(const std::string& filepath);
 	void Save(const std::string& filepath) const;
 
+	// Trims empty space surrounding the filled voxels.
+	void TrimEmptySpace();
+
 	OBX_FORCEINLINE auto Size() const { return modelData->Size(); }
 
 	OBX_FORCEINLINE const auto& MaterialAt(ivec3 idx) const { return materials[modelData->At(idx)]; }

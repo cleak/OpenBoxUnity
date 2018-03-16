@@ -8,6 +8,11 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace SandBox {
+    [Flags]
+    enum MagicaFlags : uint {
+        Trim = 0x01
+    }
+
     class Program {
         static void TestMagicaFile() {
             var m = MagicaFile.Load(@"..\..\..\..\Assets\VoxModels\Twist.vox");
@@ -332,7 +337,7 @@ namespace SandBox {
         }
 
         static void NativeLoad2() {
-            IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\Vox\room2-B.vox");
+            IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\Vox\room2-B.vox", MagicaFlags.Trim);
             obx_MagicaFreeModel(model);
         }
 
@@ -340,7 +345,7 @@ namespace SandBox {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             for (int i = 0; i < 32; ++i) {
-                IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\VoxModels\cathedral-2.vox");
+                IntPtr model = obx_MagicaLoadModel(@"..\..\..\Assets\VoxModels\cathedral-2.vox", MagicaFlags.Trim);
                 obx_MagicaFreeModel(model);
             }
             stopwatch.Stop();
@@ -358,7 +363,7 @@ namespace SandBox {
         };
 
         [DllImport("NativeBox.dll")]
-        static extern IntPtr obx_MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String str);
+        static extern IntPtr obx_MagicaLoadModel([MarshalAs(UnmanagedType.LPStr)]String str, MagicaFlags flags);
 
         [DllImport("NativeBox.dll")]
         static extern void obx_MagicaFreeModel(IntPtr handle);
