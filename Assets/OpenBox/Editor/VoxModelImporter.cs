@@ -23,7 +23,7 @@ public class VoxModelImporter : ScriptedImporter {
         ctx.SetMainObject(obj);
 
         var voxComp = obj.AddComponent<VoxelComponent>();
-        voxComp.LoadMagicaModel(ctx.assetPath, true);
+        voxComp.LoadMagicaModel(ctx.assetPath, true, VoxelFactory.ColliderType.Exact);
 
         //var voxels = MagicaFile.Load(ctx.assetPath)[0];
 

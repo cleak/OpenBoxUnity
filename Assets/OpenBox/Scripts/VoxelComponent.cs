@@ -28,7 +28,8 @@ public struct VoxelHit {
 [RequireComponent(typeof(MeshRenderer))]
 public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
     public VoxelSet<Color32> voxels;
-    public string testMe;
+    public VoxelFactory.ColliderType colliderType;
+    public GameObject colliders;
 
     public void Clear() {
         voxels = null;
@@ -135,8 +136,10 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
     }
 
     /// Loads a MagicaVoxel model into the current model.
-    public void LoadMagicaModel(string magicaVoxelFile, bool retainVoxels) {
+    public void LoadMagicaModel(string magicaVoxelFile, bool retainVoxels, VoxelFactory.ColliderType colliderType) {
         Clear();
+
+        this.colliderType = colliderType;
 
         PointQuadList opaqueFaces = new PointQuadList();
         PointQuadList transparentFaces = new PointQuadList();
@@ -144,11 +147,14 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
         IntPtr model = OpenBoxNative.MagicaLoadModel(magicaVoxelFile);
         OpenBoxNative.MagicaExtractFaces(model, ref opaqueFaces, ref transparentFaces);
 
-        if (retainVoxels) {
+        if (retainVoxels || colliderType != VoxelFactory.ColliderType.None) {
             // Copy voxels over to the C# side
             voxels = new VoxelSet<Color32>(OpenBoxNative.MagicaModelSize(model));
             OpenBoxNative.MagicaCopyVoxels(voxels.Pin(), model);
             voxels.Unpin();
+
+            // TODO: Calculate colliders natively
+            UpdateColliders();
         }
 
         OpenBoxNative.MagicaFreeModel(model);
@@ -161,6 +167,8 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
 
     /// Turns the current voxel set into a mesh, replacing any currently attached mesh.
 	public void UpdateMesh() {
+        MeshFilter mf = GetComponent<MeshFilter>();
+
         // TODO: Remove old mesh?
 
         PointQuadList opaqueFaces = new PointQuadList();
@@ -174,6 +182,24 @@ public class VoxelComponent : MonoBehaviour, ISerializationCallbackReceiver {
 
         OpenBoxNative.FreeFacesHandle(opaqueFaces.handle);
         OpenBoxNative.FreeFacesHandle(transparentFaces.handle);
+    }
+
+    public void UpdateColliders() {
+        if (colliders) {
+#if UNITY_EDITOR
+            DestroyImmediate(colliders);
+            colliders = null;
+#else
+            Destroy(colliders);
+            colliders = null;
+#endif
+        }
+
+        if (colliderType != VoxelFactory.ColliderType.None) {
+            colliders = new GameObject("Colliders");
+            colliders.transform.SetParent(transform, false);
+            VoxelFactory.AddColliders(colliders, voxels, colliderType);
+        }
     }
 
     #region Layer Marching

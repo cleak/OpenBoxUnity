@@ -147,7 +147,7 @@ void frag_surf(g2f i,
 	o.Alpha = i.color.a;
 	o.Occlusion = 1.0;
 	o.Smoothness = 0.5;
-	o.Metallic = 0.0;
+	o.Metallic = 1.0;
 
 	half atten = 1;
 

@@ -365,9 +365,9 @@ public class VoxelFactory {
     }
 
     // Adds colliders to the given game object.
-    public static void AddColliders(GameObject obj, VoxelSet<Vec4b> voxels, ColliderType colliderType) {
+    public static void AddColliders(GameObject obj, VoxelSet<Color32> voxels, ColliderType colliderType) {
         if (colliderType != ColliderType.None) {
-            VoxelSet<bool> shape = voxels.Project(v => v.w > 0);
+            VoxelSet<bool> shape = voxels.Project(v => v.a > 0);
             int scale = 1;
             if (colliderType == ColliderType.HalfScale) {
                 //shape = ReduceShape(shape);
@@ -397,7 +397,7 @@ public class VoxelFactory {
         }
     }
 
-    public static GameObject Load(VoxelSet<Vec4b> voxels, ColliderType colliderType) {
+    /*public static GameObject Load(VoxelSet<Vec4b> voxels, ColliderType colliderType) {
         GameObject obj = new GameObject("VoxelModel");
 
         Material[] materials;
@@ -414,7 +414,7 @@ public class VoxelFactory {
         AddColliders(obj, voxels, colliderType);
 
         return obj;
-    }
+    }*/
 
     public static GameObject Load(string filepath, ColliderType colliderType) {
         GameObject obj = new GameObject("VoxelModel");
