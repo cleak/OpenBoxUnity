@@ -11,6 +11,10 @@ using LiteBox.LMath;
 [ScriptedImporter(1, "vox")]
 public class VoxModelImporter : ScriptedImporter {
     public bool trimEmptySpace = false;
+    public bool includeRigidBody = false;
+
+    [HideInInspector]
+    public float scale = 1;
 
     [HideInInspector]
     public VoxelFactory.ColliderType colliderType;
@@ -36,6 +40,10 @@ public class VoxModelImporter : ScriptedImporter {
         var meshRenderer = obj.GetComponent<MeshRenderer>();
         for (int i = 0; i < meshRenderer.sharedMaterials.Length; ++i) {
             ctx.AddObjectToAsset("Material_" + i, meshRenderer.sharedMaterials[i]);
+        }
+
+        if (includeRigidBody) {
+            obj.AddComponent<Rigidbody>();
         }
     }
 }
