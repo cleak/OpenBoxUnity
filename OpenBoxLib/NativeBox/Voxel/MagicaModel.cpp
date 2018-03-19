@@ -168,7 +168,7 @@ public:
 
 		string type = "";
 		map<string, float> props;
-		for (int i = 0; i < numProps + 1; ++i) {
+		for (int i = 0; i < numProps; ++i) {
 			string propName = stream.ReadString(false);
 			string valueStr = stream.ReadString(false);
 
@@ -235,19 +235,25 @@ public:
 				}
 
 				models[modelIdx] = LoadModel(chunk);
+                continue;
 			}
 
 			if (chunk.chunkId == kChunkRgba) {
 				LoadPaletteChunk(chunk);
-			}
+                continue;
+            }
 
 			if (chunk.chunkId == kChunkMatt) {
 				LoadOldMaterial(chunk);
-			}
+                continue;
+            }
 
 			if (chunk.chunkId == kChunkMatl) {
 				LoadNewMaterial(chunk);
-			}
+                continue;
+            }
+
+            stream.SetLocation(stream.GetLocation() + chunk.numBytes);
 		}
 
 		if (modelIdx + 1 != numModels || numModels == 0) {
